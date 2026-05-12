@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Glow Up">
+<meta name="theme-color" content="#0a0908">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Glow Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold2: #e8c97a;
+  --gold3: #f5e0a0;
+  --dark: #0a0908;
+  --dark2: #141210;
+  --dark3: #1e1b17;
+  --dark4: #28241e;
+  --muted: #7a6e5f;
+  --text: #f0ebe0;
+  --red: #c0392b;
+  --green: #27ae60;
+  --blue: #2980b9;
+  --safe: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  overscroll-behavior: none;
+}
+
+/* ── LAYOUT ── */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  height: -webkit-fill-available;
+}
+
+#screen {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(80px + var(--safe));
+}
+
+/* ── NAV ── */
+#nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--dark2);
+  border-top: 1px solid #2a2520;
+  display: flex;
+  padding-bottom: var(--safe);
+  z-index: 100;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.nav-btn.active { color: var(--gold); }
+.nav-icon { font-size: 20px; line-height: 1; }
+
+/* ── PAGES ── */
+.page { display: none; animation: fadeUp 0.3s ease; }
+.page.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TYPOGRAPHY ── */
+.serif { font-family: 'Cormorant Garamond', serif; }
+
+h1.hero {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+h1.hero em { font-style: italic; color: var(--gold); }
+
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--dark3);
+  border: 1px solid #2a2520;
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+
+.card-label {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* ── TODAY PAGE ── */
+#page-today { padding: 0; }
+
+.today-header {
+  padding: 52px 20px 20px;
+  background: linear-gradient(180deg, #141210 0%, transparent 100%);
+  position: relative;
+}
+
+.today-date {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.today-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.today-title span { color: var(--gold); font-style: italic; }
+
+.days-left {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.days-left strong { color: var(--gold2); }
+
+/* Progress ring */
+.progress-ring-wrap {
+  position: absolute;
+  right: 20px;
+  top: 44px;
+}
+
+.progress-ring { transform: rotate(-90deg); }
+
+.ring-bg { fill: none; stroke: #2a2520; stroke-width: 3; }
+.ring-fill { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+
+.ring-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.ring-pct {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.ring-sub { font-size: 8px; color: var(--muted); letter-spacing: 0.1em; }
+
+/* Timeline */
+.timeline { padding: 0 20px 20px; }
+
+.tl-group { margin-bottom: 20px; }
+
+.tl-group-label {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  padding-left: 28px;
+}
+
+.tl-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #1e1b17;
+  cursor: pointer;
+  position: relative;
+}
+
+.tl-item:last-child { border-bottom: none; }
+
+.tl-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--dark4);
+  border: 1px solid var(--muted);
+  flex-shrink: 0;
+  margin-top: 4px;
+  transition: all 0.2s;
+}
+
+.tl-item.done .tl-dot {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 6px rgba(201,168,76,0.4);
+}
+
+.tl-item.exam .tl-dot { background: #c0392b; border-color: #c0392b; }
+.tl-item.skip { opacity: 0.4; }
+
+.tl-time {
+  font-size: 10px;
+  color: var(--muted);
+  min-width: 38px;
+  margin-top: 2px;
+}
+
+.tl-content { flex: 1; }
+.tl-name { font-size: 13px; line-height: 1.3; }
+.tl-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.tl-check {
+  width: 22px; height: 22px;
+  border: 1px solid #3a3028;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.tl-item.done .tl-check {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark);
+}
+
+/* Exam banner */
+.exam-banner {
+  background: linear-gradient(135deg, #1a0a0a, #2a1010);
+  border: 1px solid #c0392b40;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 0 20px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.exam-banner-icon { font-size: 24px; }
+.exam-banner-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #e05050; }
+.exam-banner-sub { font-size: 10px; color: var(--muted); }
+
+/* ── CALENDAR PAGE ── */
+#page-calendar { padding: 52px 20px 20px; }
+
+.cal-header { margin-bottom: 20px; }
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.month-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.month-btn {
+  background: var(--dark3);
+  border: 1px solid #2a2520;
+  border-radius: 4px;
+  color: var(--text);
+  width: 32px; height: 32px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.cal-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  position: relative;
+  background: var(--dark3);
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
+.cal-day.today { border-color: var(--gold); color: var(--gold); font-weight: 500; }
+.cal-day.exam { background: #2a1010; border-color: #c0392b40; }
+.cal-day.exam-dot::after {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #c0392b;
+  position: absolute;
+  bottom: 3px;
+}
+.cal-day.past { opacity: 0.4; }
+.cal-day.haircut { background: #0a1a2a; border-color: #2980b940; }
+
+.cal-day-num { font-size: 13px; line-height: 1; }
+.cal-day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); margin-top: 2px; }
+
+/* Day detail */
+.day-detail {
+  margin-top: 16px;
+  animation: fadeUp 0.2s ease;
+}
+
+.day-detail-header {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--gold);
+}
+
+.day-event {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #1e1b17;
+  align-items: center;
+}
+
+.day-event:last-child { border-bottom: none; }
+
+.day-event-time { font-size: 10px; color: var(--muted); min-width: 40px; }
+.day-event-name { font-size: 12px; flex: 1; }
+
+.day-event-tag {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.tag-gym { background: #1a2a1a; color: #5dac6e; border: 1px solid #2a4a2a; }
+.tag-skin { background: #1a1a2a; color: #7a9fd4; border: 1px solid #2a2a4a; }
+.tag-food { background: #2a1a0a; color: #d4a05a; border: 1px solid #4a2a0a; }
+.tag-supp { background: #1a2a2a; color: #5aaaa0; border: 1px solid #2a4a4a; }
+.tag-rev { background: #2a2a1a; color: #c8c060; border: 1px solid #4a4a2a; }
+.tag-exam { background: #2a1010; color: #e05050; border: 1px solid #4a2020; }
+.tag-run { background: #1a2a1a; color: #70c870; border: 1px solid #2a4a2a; }
+.tag-other { background: var(--dark4); color: var(--muted); border: 1px solid #3a3028; }
+
+/* ── HABITS PAGE ── */
+#page-habits { padding: 52px 20px 20px; }
+
+.habit-section { margin-bottom: 24px; }
+
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #1e1b17;
+  cursor: pointer;
+}
+
+.habit-item:last-child { border-bottom: none; }
+
+.habit-check {
+  width: 24px; height: 24px;
+  border: 1px solid #3a3028;
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.habit-item.done .habit-check {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark);
+}
+
+.habit-icon { font-size: 18px; flex-shrink: 0; }
+.habit-name { flex: 1; font-size: 13px; }
+.habit-streak { font-size: 10px; color: var(--gold); }
+
+/* Water tracker */
+.water-track {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.water-glass {
+  width: 32px; height: 40px;
+  border: 1px solid #2a2520;
+  border-radius: 0 0 5px 5px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.water-glass.filled { border-color: #2980b9; }
+
+.water-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 0;
+  background: linear-gradient(to top, #1a5a8a, #2980b9);
+  transition: height 0.3s ease;
+}
+
+.water-glass.filled .water-fill { height: 100%; }
+.water-label { margin-top: 8px; font-size: 11px; color: var(--muted); }
+.water-label span { color: #4a9fc0; }
+
+/* ── SUPPLEMENTS PAGE ── */
+#page-supplements { padding: 52px 20px 20px; }
+
+.supp-time { margin-bottom: 24px; }
+
+.supp-time-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2520;
+}
+
+.supp-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a1714;
+  cursor: pointer;
+}
+
+.supp-item:last-child { border-bottom: none; }
+
+.supp-check {
+  width: 22px; height: 22px;
+  border: 1px solid #3a3028;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  font-size: 11px;
+}
+
+.supp-item.done .supp-check {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark);
+}
+
+.supp-icon { font-size: 20px; flex-shrink: 0; }
+.supp-name { flex: 1; }
+.supp-dose { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.supp-note { font-size: 10px; color: #5a9a80; margin-top: 2px; }
+
+/* ── SHOP PAGE ── */
+#page-shop { padding: 52px 20px 20px; }
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #1e1b17;
+  cursor: pointer;
+}
+
+.shop-item:last-child { border-bottom: none; }
+
+.shop-check {
+  width: 22px; height: 22px;
+  border: 1px solid #3a3028;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  font-size: 11px;
+}
+
+.shop-item.done .shop-check {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--dark);
+}
+
+.shop-item.done .shop-name { text-decoration: line-through; opacity: 0.5; }
+
+.shop-name { flex: 1; }
+.shop-tag {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+/* ── NOTIFICATION BANNER ── */
+.notif-banner {
+  background: linear-gradient(135deg, #1a1508, #252010);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 0 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.notif-banner-icon { font-size: 28px; }
+.notif-banner-text h3 { font-size: 14px; color: var(--gold); margin-bottom: 2px; }
+.notif-banner-text p { font-size: 11px; color: var(--muted); }
+
+/* ── STREAK ── */
+.streak-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.streak-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.streak-label { font-size: 11px; color: var(--muted); }
+
+/* ── PILL ── */
+.pill {
+  display: inline-block;
+  background: var(--dark4);
+  border: 1px solid #3a3028;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 10px;
+  color: var(--muted);
+  margin: 3px;
+}
+
+.pill.gold { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: 500; }
+
+/* ── MISC ── */
+.divider { height: 1px; background: #2a2520; margin: 16px 0; }
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--gold);
+  color: var(--dark);
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+.btn:active { opacity: 0.8; }
+.btn.outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+
+.empty-state .big { font-size: 40px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="screen">
+
+    <!-- TODAY -->
+    <div id="page-today" class="page active">
+      <div class="today-header">
+        <div class="today-date" id="today-date-str"></div>
+        <div class="today-title">Today's <span>Glow</span></div>
+        <div class="days-left">⏳ <strong id="days-left-num">—</strong> days until 15 June</div>
+        <div class="progress-ring-wrap">
+          <div style="position:relative;width:72px;height:72px;">
+            <svg class="progress-ring" width="72" height="72" viewBox="0 0 72 72">
+              <circle class="ring-bg" cx="36" cy="36" r="30"/>
+              <circle class="ring-fill" id="ring-fill" cx="36" cy="36" r="30" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+            </svg>
+            <div class="ring-text">
+              <div class="ring-pct" id="ring-pct">0%</div>
+              <div class="ring-sub">DONE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="exam-banner-today"></div>
+      <div id="notif-prompt"></div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div id="page-calendar" class="page">
+      <div class="eyebrow" style="margin-bottom:8px">SCHEDULE</div>
+      <div class="cal-header">
+        <div class="month-nav">
+          <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+          <div class="month-name serif" id="month-name"></div>
+          <button class="month-btn" onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="cal-days-header">
+          <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div class="day-detail" id="day-detail"></div>
+    </div>
+
+    <!-- HABITS -->
+    <div id="page-habits" class="page">
+      <div class="eyebrow" style="margin-bottom:8px">DAILY HABITS</div>
+      <div class="section-title serif">Today's Checklist</div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-label">💧 Water</div>
+        <div class="water-track" id="water-track"></div>
+        <div class="water-label">Target: <span id="water-count">0</span>/8 glasses · <span id="water-ml">0</span>ml</div>
+      </div>
+
+      <div id="habits-list"></div>
+    </div>
+
+    <!-- SUPPLEMENTS -->
+    <div id="page-supplements" class="page">
+      <div class="eyebrow" style="margin-bottom:8px">SUPPLEMENTS</div>
+      <div class="section-title serif">Daily Stack</div>
+      <div id="supp-list"></div>
+    </div>
+
+    <!-- SHOP -->
+    <div id="page-shop" class="page">
+      <div class="eyebrow" style="margin-bottom:8px">SHOPPING</div>
+      <div class="section-title serif">Buy List</div>
+      <div class="card">
+        <div class="card-label">🛒 One-time purchases</div>
+        <div id="shop-list"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-label">🥦 Weekly food</div>
+        <div id="food-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <button class="nav-btn active" onclick="showPage('today',this)">
+      <span class="nav-icon">☀️</span>TODAY
+    </button>
+    <button class="nav-btn" onclick="showPage('calendar',this)">
+      <span class="nav-icon">📅</span>CAL
+    </button>
+    <button class="nav-btn" onclick="showPage('habits',this)">
+      <span class="nav-icon">✅</span>HABITS
+    </button>
+    <button class="nav-btn" onclick="showPage('supplements',this)">
+      <span class="nav-icon">💊</span>SUPPS
+    </button>
+    <button class="nav-btn" onclick="showPage('shop',this)">
+      <span class="nav-icon">🛒</span>SHOP
+    </button>
+  </nav>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+
+const EXAM_DATES = {
+  '2026-05-11': ['English Lit P1 (AM)', 'Business P1 (PM)'],
+  '2026-05-14': ['Maths P1 Non-Calc (AM)'],
+  '2026-05-15': ['History P1 (AM)'],
+  '2026-05-18': ['Chemistry P1 (AM)'],
+  '2026-05-19': ['English Lit P2 (AM)'],
+  '2026-05-21': ['English Lang P1 (AM)', 'Business P2 (PM)'],
+  '2026-06-02': ['Physics P1 (AM)'],
+  '2026-06-03': ['Maths P2 Calc (AM)'],
+  '2026-06-04': ['History P2 (AM)'],
+  '2026-06-05': ['English Lang P2 (AM)'],
+  '2026-06-09': ['History P3 (PM)'],
+  '2026-06-10': ['Maths P3 Calc (AM)'],
+  '2026-06-11': ['Food & Nutrition (PM)'],
+  '2026-06-12': ['Chemistry P2 (AM)'],
+  '2026-06-15': ['Physics P2 (AM) 🎓 LAST EXAM + ✂️ HAIRCUT']
+};
+
+// Tutor sessions: [day(0=Sun), hour, min, endHour, endMin, label]
+const TUTOR = [
+  [2, 17, 0, 18, 0, 'Tutor Session'],   // Tue 5-6pm
+  [3, 10, 0, 11, 0, 'Tutor Session'],   // Wed 10-11am
+  [4, 10, 0, 11, 0, 'Tutor Session'],   // Thu 10-11am
+  [5, 11, 0, 12, 0, 'Tutor Session'],   // Fri 11-12pm
+  [6, 9, 0, 10, 30, 'Tutor Session'],   // Sat 9-10:30am
+  [0, 10, 0, 11, 0, 'Tutor Session'],   // Sun 10-11am
+];
+
+// Gym split by day (1=Mon...0=Sun)
+const GYM_SPLIT = {
+  1: 'Push — Chest, Shoulders, Tris',
+  2: 'Pull — Back, Biceps',  // 3:30pm
+  3: 'Legs + Abs',
+  4: 'Skill + Arms',
+  5: 'Push or Pull',
+  6: 'Legs + Abs',
+  0: null
+};
+
+const GYM_TIME = { 2: '15:30', default: '16:30' };
+
+const LEG_DAYS = [3, 6]; // Wed, Sat - no run
+
+// ── DAILY SCHEDULE TEMPLATE ──
+function getDaySchedule(date) {
+  const dow = date.getDay(); // 0=Sun
+  const dateStr = toDateStr(date);
+  const isExam = EXAM_DATES[dateStr];
+  const isLegDay = LEG_DAYS.includes(dow);
+  const isLastDay = dateStr === '2026-06-15';
+  const todayStr = toDateStr(new Date());
+  const isPast = dateStr < todayStr;
+
+  let items = [];
+
+  // Wake
+  items.push({ time: '07:30', name: 'Wake up', icon: '🌅', tag: 'other', id: 'wake' });
+
+  // Run (not leg days, not Sunday)
+  if (!isLegDay && dow !== 0) {
+    items.push({ time: '07:35', name: 'Morning run — fasted', icon: '🏃', tag: 'run', sub: '20-25 mins easy pace', id: 'run' });
+  }
+
+  // Breakfast + supps
+  items.push({ time: '08:00', name: 'Breakfast', icon: '🍳', tag: 'food', sub: '4-5 eggs, wholegrain toast, oat milk shake, banana', id: 'breakfast' });
+  items.push({ time: '08:10', name: 'Morning supplements', icon: '💊', tag: 'supp', sub: 'Multivitamin · D3+K2 · Omega-3 · Creatine · Potassium · B6', id: 'supp-am' });
+  items.push({ time: '08:20', name: 'Antibiotic pill', icon: '💊', tag: 'supp', sub: 'After breakfast', id: 'antibiotic' });
+  items.push({ time: '08:25', name: 'Ice roller + facial massage', icon: '🧊', tag: 'skin', sub: '2 mins before cleanser', id: 'ice-roller' });
+
+  // Morning skincare
+  items.push({ time: '08:30', name: 'Morning skincare', icon: '🧴', tag: 'skin', sub: 'Cetaphil → Niacinamide → CeraVe → SPF', id: 'skin-am' });
+  items.push({ time: '08:50', name: 'Red light mask', icon: '🔴', tag: 'skin', sub: '10-20 mins', id: 'rlm-am' });
+  items.push({ time: '09:10', name: 'Morning journal', icon: '📓', tag: 'other', sub: '3 mins — write 3 priorities', id: 'journal' });
+  items.push({ time: '09:15', name: 'Eyebrow serum', icon: '✨', tag: 'skin', sub: 'After skincare', id: 'brow-serum' });
+
+  // Revision / exam blocks
+  if (isExam) {
+    items.push({ time: '—', name: `EXAM DAY`, icon: '📝', tag: 'exam', sub: isExam.join(' · '), id: 'exam', isExam: true });
+    items.push({ time: '—', name: 'Revision — light review only', icon: '📚', tag: 'rev', sub: '3 hours max today', id: 'rev-exam' });
+  } else {
+    items.push({ time: '09:30', name: 'Revision block 1', icon: '📚', tag: 'rev', sub: '~2.5 hours with breaks', id: 'rev1' });
+    items.push({ time: '11:00', name: 'Water check ✓', icon: '💧', tag: 'other', sub: 'Should be on bottle 2', id: 'water-check1' });
+    items.push({ time: '13:00', name: 'Lunch', icon: '🍽️', tag: 'food', sub: 'Carb heavy — rice/pasta + protein', id: 'lunch' });
+    items.push({ time: '13:30', name: 'Revision block 2', icon: '📚', tag: 'rev', sub: '~2.5 hours', id: 'rev2' });
+  }
+
+  // Tutor
+  const tutor = TUTOR.find(t => t[0] === dow);
+  if (tutor) {
+    const tTime = `${String(tutor[1]).padStart(2,'0')}:${String(tutor[2]).padStart(2,'0')}`;
+    items.push({ time: tTime, name: 'Tutor Session (Zoom)', icon: '💻', tag: 'rev', sub: `Until ${tutor[3]}:${String(tutor[4]).padStart(2,'0')}`, id: 'tutor' });
+  }
+
+  // Gym
+  const gymSplit = GYM_SPLIT[dow];
+  if (gymSplit) {
+    const gymTime = dow === 2 ? '15:30' : '16:30';
+    items.push({ time: gymTime, name: gymTime === '15:30' ? 'Gym (early — before tutor)' : 'Gym', icon: '🏋️', tag: 'gym', sub: gymSplit, id: 'gym' });
+    items.push({ time: gymTime, name: 'Dead hangs + wrist mobility', icon: '🤸', tag: 'gym', sub: '5 mins before session', id: 'dead-hangs' });
+  }
+
+  items.push({ time: '15:00', name: 'Water check ✓', icon: '💧', tag: 'other', sub: 'Should be on bottle 3', id: 'water-check2' });
+
+  // Post gym
+  if (gymSplit) {
+    const shakeTime = dow === 2 ? '16:45' : '18:00';
+    items.push({ time: shakeTime, name: 'Protein shake', icon: '🥛', tag: 'supp', sub: '2 scoops oat milk — post workout', id: 'shake' });
+  }
+
+  // Dinner
+  items.push({ time: '18:30', name: 'Dinner', icon: '🍽️', tag: 'food', sub: 'Protein heavy — steak/mince/chicken + sweet potato/rice', id: 'dinner' });
+
+  if (!isExam) {
+    items.push({ time: '19:30', name: 'Revision block 3', icon: '📚', tag: 'rev', sub: '~1.5 hours', id: 'rev3' });
+  }
+
+  items.push({ time: '21:00', name: 'Water check ✓', icon: '💧', tag: 'other', sub: 'Finish remaining target', id: 'water-check3' });
+
+  // Evening wind down
+  items.push({ time: '21:30', name: 'Dandelion tea', icon: '🍵', tag: 'supp', sub: 'Evening wind down', id: 'dan-tea' });
+  items.push({ time: '21:45', name: 'Red light mask', icon: '🔴', tag: 'skin', sub: 'Evening — 10-20 mins', id: 'rlm-pm' });
+
+  // Evening skincare
+  items.push({ time: '22:00', name: 'Evening skincare', icon: '🧴', tag: 'skin', sub: 'Cetaphil → (wait) → Differin → (20 min) → CeraVe', id: 'skin-pm' });
+  items.push({ time: '22:05', name: 'Lip balm', icon: '💋', tag: 'skin', sub: 'CeraVe or Vaseline', id: 'lip-balm' });
+  items.push({ time: '22:10', name: 'Ashwagandha + Magnesium', icon: '🌿', tag: 'supp', sub: 'Evening dose for sleep', id: 'supp-pm' });
+  items.push({ time: '22:30', name: 'No phone — wind down', icon: '📵', tag: 'other', sub: '30 mins screen-free before sleep', id: 'no-phone' });
+  items.push({ time: '22:35', name: 'CeraVe moisturiser', icon: '🧴', tag: 'skin', sub: '20+ mins after Differin', id: 'cerave-pm' });
+
+  // Teeth whitening June 1-15
+  if (dateStr >= '2026-06-01' && dateStr <= '2026-06-15') {
+    items.push({ time: '22:40', name: 'Teeth whitening strips', icon: '🦷', tag: 'skin', sub: 'HiSmile PAP+ — 30 mins', id: 'teeth' });
+  }
+
+  if (isLastDay) {
+    items.push({ time: '—', name: '✂️ HAIRCUT DAY 🎉', icon: '✂️', tag: 'other', sub: 'You made it — glow up complete', id: 'haircut', isExam: true });
+  }
+
+  items.push({ time: '23:00', name: 'Sleep', icon: '🌙', tag: 'other', id: 'sleep' });
+
+  // Sort by time
+  items.sort((a, b) => {
+    if (a.time === '—') return 1;
+    if (b.time === '—') return -1;
+    return a.time.localeCompare(b.time);
+  });
+
+  return items;
+}
+
+// ── SUPPLEMENTS DATA ──
+const SUPPLEMENTS = {
+  morning: [
+    { name: 'Multivitamin', dose: '1 capsule', icon: '💊', note: 'With breakfast' },
+    { name: 'Vitamin D3 + K2', dose: '1 capsule', icon: '☀️', note: 'With food' },
+    { name: 'Omega-3', dose: '1 capsule', icon: '🐟', note: 'Ultimate Human — with food' },
+    { name: 'Creatine', dose: '5g', icon: '💪', note: 'Mix in water or shake' },
+    { name: 'Potassium Citrate', dose: '1 capsule', icon: '⚡', note: 'With food' },
+    { name: 'Vitamin B6', dose: '100mg', icon: '🔋', note: 'With food' },
+    { name: 'Zinc', dose: '1 capsule', icon: '🛡️', note: 'If not in multivitamin' },
+  ],
+  afterBreakfast: [
+    { name: 'Antibiotic', dose: 'As prescribed', icon: '💊', note: 'Prescription — after breakfast' },
+  ],
+  postWorkout: [
+    { name: 'Protein shake', dose: '2 scoops', icon: '🥛', note: 'In oat milk — post gym' },
+  ],
+  evening: [
+    { name: 'Ashwagandha', dose: '1 capsule', icon: '🌿', note: 'Reduces cortisol — aids sleep' },
+    { name: 'Magnesium Glycinate', dose: '1-2 capsules', icon: '😴', note: 'Muscle recovery + sleep' },
+    { name: 'Dandelion Tea', dose: '1 cup', icon: '🍵', note: 'Digestive support' },
+    { name: 'Collagen Peptides', dose: '1 scoop', icon: '🦴', note: 'Joint + tendon health for calisthenics' },
+  ]
+};
+
+// ── HABITS DATA ──
+const HABITS_DATA = [
+  { id: 'h-journal', icon: '📓', name: 'Morning journal (3 mins)', section: 'morning' },
+  { id: 'h-ice', icon: '🧊', name: 'Ice roller + facial massage', section: 'morning' },
+  { id: 'h-brow', icon: '✨', name: 'Eyebrow serum', section: 'morning' },
+  { id: 'h-lip', icon: '💋', name: 'Lip balm', section: 'morning' },
+  { id: 'h-dead', icon: '🤸', name: 'Dead hangs (60 seconds)', section: 'gym' },
+  { id: 'h-wrist', icon: '🔄', name: 'Wrist mobility (5 mins)', section: 'gym' },
+  { id: 'h-pillow', icon: '🛏️', name: 'Check pillowcase (change every 3 days)', section: 'other' },
+  { id: 'h-phone', icon: '📵', name: 'No phone 30 mins before bed', section: 'evening' },
+  { id: 'h-posture', icon: '🧍', name: 'Posture check — stand tall', section: 'other' },
+  { id: 'h-face', icon: '🤚', name: 'Didn\'t touch face today', section: 'other' },
+];
+
+// ── SHOP DATA ──
+const SHOP_ITEMS = [
+  { id: 's1', name: 'The Ordinary Niacinamide 10% + Zinc', tag: 'skin', note: '~£5' },
+  { id: 's2', name: 'La Roche-Posay Anthelios SPF50+', tag: 'skin', note: 'Acne-prone formula' },
+  { id: 's3', name: 'Zinc supplement', tag: 'supp', note: 'Check multivitamin first' },
+  { id: 's4', name: 'Magnesium Glycinate', tag: 'supp', note: 'Evening sleep stack' },
+  { id: 's5', name: 'Creatine monohydrate', tag: 'supp', note: '5g/day — plain flavour' },
+  { id: 's6', name: 'Ashwagandha', tag: 'supp', note: 'KSM-66 form best' },
+  { id: 's7', name: 'Vitamin D3 + K2', tag: 'supp', note: 'Combined capsule' },
+  { id: 's8', name: 'Boys multivitamin', tag: 'supp', note: '' },
+  { id: 's9', name: 'Collagen peptides', tag: 'supp', note: 'Optional — joint health' },
+  { id: 's10', name: 'Ice roller', tag: 'skin', note: 'Keep in freezer' },
+  { id: 's11', name: 'Eyebrow serum', tag: 'skin', note: '' },
+  { id: 's12', name: 'Lip balm (CeraVe or Vaseline)', tag: 'skin', note: '' },
+  { id: 's13', name: 'HiSmile PAP+ Whitening Strips', tag: 'skin', note: 'Sensitive — start 1 June' },
+  { id: 's14', name: 'Extra CeraVe moisturiser', tag: 'skin', note: 'Backup' },
+];
+
+const FOOD_ITEMS = [
+  { id: 'f1', name: 'Eggs ×18', tag: 'food' },
+  { id: 'f2', name: 'Chicken breast', tag: 'food' },
+  { id: 'f3', name: 'Beef mince', tag: 'food' },
+  { id: 'f4', name: 'Steak', tag: 'food' },
+  { id: 'f5', name: 'Wholegrain bread', tag: 'food' },
+  { id: 'f6', name: 'Rice (big bag)', tag: 'food' },
+  { id: 'f7', name: 'Pasta', tag: 'food' },
+  { id: 'f8', name: 'Oats', tag: 'food' },
+  { id: 'f9', name: 'Avocados', tag: 'food' },
+  { id: 'f10', name: 'Almond butter', tag: 'food' },
+  { id: 'f11', name: 'Peanut butter', tag: 'food' },
+  { id: 'f12', name: 'Mixed nuts', tag: 'food' },
+  { id: 'f13', name: 'Olive oil', tag: 'food' },
+  { id: 'f14', name: 'Oatly Barista oat milk', tag: 'food' },
+  { id: 'f15', name: 'Rice cakes', tag: 'food' },
+  { id: 'f16', name: 'Bananas', tag: 'food' },
+  { id: 'f17', name: 'Corn tortillas', tag: 'food' },
+  { id: 'f18', name: 'Soy sauce + hot sauce', tag: 'food' },
+  { id: 'f19', name: 'Dairy-free pesto', tag: 'food' },
+  { id: 'f20', name: 'Cherry tomatoes', tag: 'food' },
+  { id: 'f21', name: 'Spinach', tag: 'food' },
+  { id: 'f22', name: 'Cucumber + peppers', tag: 'food' },
+  { id: 'f23', name: 'Burger buns (wholegrain)', tag: 'food' },
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem('glowup-state') || '{}'); }
+  catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem('glowup-state', JSON.stringify(state));
+}
+
+let state = loadState();
+
+function getDateKey(date) {
+  return toDateStr(date || new Date());
+}
+
+function toggle(key, subkey) {
+  if (!state[key]) state[key] = {};
+  state[key][subkey] = !state[key][subkey];
+  saveState(state);
+}
+
+function isChecked(key, subkey) {
+  return !!(state[key] && state[key][subkey]);
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+
+function toDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function daysUntil(dateStr) {
+  const target = new Date(dateStr + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.ceil((target - today) / 86400000);
+}
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// ══════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════
+
+async function requestNotifications() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+
+function buildNotifSchedule() {
+  const schedule = [
+    { time: '07:30', title: '🌅 Wake up', body: 'Time to start your glow up day', tag: 'wake', days: [1,2,3,4,5,6,0] },
+    { time: '07:35', title: '🏃 Run time', body: 'Fasted run — 20-25 mins easy', tag: 'run', days: [1,2,4,5] },
+    { time: '08:00', title: '🍳 Breakfast', body: 'Eggs, toast, shake, banana', tag: 'breakfast', days: [1,2,3,4,5,6,0] },
+    { time: '08:10', title: '💊 Morning supplements', body: 'Multivitamin · D3K2 · Omega-3 · Creatine · Potassium · B6 · Zinc', tag: 'supp-am', days: [1,2,3,4,5,6,0] },
+    { time: '08:20', title: '💊 Antibiotic', body: 'Take after breakfast', tag: 'antibiotic', days: [1,2,3,4,5,6,0] },
+    { time: '08:25', title: '🧊 Ice roller', body: 'Face massage — 2 mins before cleanser', tag: 'ice', days: [1,2,3,4,5,6,0] },
+    { time: '08:30', title: '🧴 Morning skincare', body: 'Cetaphil → Niacinamide → CeraVe → SPF', tag: 'skin-am', days: [1,2,3,4,5,6,0] },
+    { time: '08:50', title: '🔴 Red light mask', body: 'Morning session — 10-20 mins', tag: 'rlm-am', days: [1,2,3,4,5,6,0] },
+    { time: '09:10', title: '📓 Morning journal', body: 'Write 3 priorities for today — 3 mins', tag: 'journal', days: [1,2,3,4,5,6,0] },
+    { time: '09:15', title: '✨ Eyebrow serum', body: 'Apply after skincare', tag: 'brow', days: [1,2,3,4,5,6,0] },
+    { time: '11:00', title: '💧 Water check', body: 'Should be on bottle 2 — keep going!', tag: 'water1', days: [1,2,3,4,5,6,0] },
+    { time: '13:00', title: '🍽️ Lunch time', body: 'Carb heavy — rice/pasta + protein', tag: 'lunch', days: [1,2,3,4,5,6,0] },
+    { time: '15:00', title: '💧 Water check', body: 'Should be on bottle 3', tag: 'water2', days: [1,2,3,4,5,6,0] },
+    { time: '15:30', title: '🏋️ Gym time — Pull day', body: 'Back & Biceps — remember to start before tutor at 5!', tag: 'gym-tue', days: [2] },
+    { time: '16:15', title: '🤸 Dead hangs + wrist mobility', body: '5 mins before session', tag: 'dehang-tue', days: [2] },
+    { time: '16:30', title: '🏋️ Gym time', body: 'Time to train — check your split', tag: 'gym', days: [1,3,4,5,6] },
+    { time: '16:15', title: '🤸 Dead hangs + wrist mobility', body: '5 mins before session', tag: 'dehang', days: [1,3,4,5,6] },
+    { time: '17:00', title: '💻 Tutor session', body: 'Zoom — be ready', tag: 'tutor-tue', days: [2] },
+    { time: '10:00', title: '💻 Tutor session', body: 'Zoom — be ready', tag: 'tutor-wed', days: [3] },
+    { time: '10:00', title: '💻 Tutor session', body: 'Zoom — be ready', tag: 'tutor-thu', days: [4] },
+    { time: '11:00', title: '💻 Tutor session', body: 'Zoom — be ready', tag: 'tutor-fri', days: [5] },
+    { time: '09:00', title: '💻 Tutor session', body: 'Zoom — be ready', tag: 'tutor-sat', days: [6] },
+    { time: '10:00', title: '💻 Tutor session', body: 'Zoom — be ready', tag: 'tutor-sun', days: [0] },
+    { time: '18:30', title: '🍽️ Dinner time', body: 'Protein heavy — hit your calories!', tag: 'dinner', days: [1,2,3,4,5,6,0] },
+    { time: '18:00', title: '🥛 Protein shake', body: 'Post workout — 2 scoops in oat milk', tag: 'shake', days: [1,3,4,5,6] },
+    { time: '16:45', title: '🥛 Protein shake', body: 'Post workout — 2 scoops in oat milk', tag: 'shake-tue', days: [2] },
+    { time: '21:00', title: '💧 Water check', body: 'Finish your remaining water target!', tag: 'water3', days: [1,2,3,4,5,6,0] },
+    { time: '21:30', title: '🍵 Dandelion tea', body: 'Evening wind down begins', tag: 'dantea', days: [1,2,3,4,5,6,0] },
+    { time: '21:45', title: '🔴 Red light mask', body: 'Evening session — 10-20 mins', tag: 'rlm-pm', days: [1,2,3,4,5,6,0] },
+    { time: '22:00', title: '🧴 Evening skincare', body: 'Cetaphil → Differin (wait 20 min) → CeraVe', tag: 'skin-pm', days: [1,2,3,4,5,6,0] },
+    { time: '22:05', title: '💋 Lip balm', body: 'Differin dries lips — apply now', tag: 'lip', days: [1,2,3,4,5,6,0] },
+    { time: '22:10', title: '🌿 Evening supplements', body: 'Ashwagandha + Magnesium Glycinate + Collagen', tag: 'supp-pm', days: [1,2,3,4,5,6,0] },
+    { time: '22:30', title: '📵 Put the phone down', body: '30 mins screen-free — let ashwagandha work', tag: 'no-phone', days: [1,2,3,4,5,6,0] },
+    { time: '22:35', title: '🧴 CeraVe moisturiser', body: '20+ mins after Differin — apply now', tag: 'cerave-pm', days: [1,2,3,4,5,6,0] },
+    { time: '23:00', title: '🌙 Sleep', body: '8 hours — this is when you grow and glow', tag: 'sleep', days: [1,2,3,4,5,6,0] },
+    // Teeth whitening June 1-15
+    { time: '22:40', title: '🦷 Whitening strips', body: 'HiSmile PAP+ — 30 mins, don\'t eat after', tag: 'teeth', days: [1,2,3,4,5,6,0], from: '2026-06-01', until: '2026-06-15' },
+  ];
+
+  return schedule;
+}
+
+async function setupNotifications() {
+  if (!('serviceWorker' in navigator)) return;
+  const reg = await navigator.serviceWorker.ready;
+  const schedule = buildNotifSchedule();
+  reg.active.postMessage({ type: 'SCHEDULE_NOTIFICATIONS', schedule });
+}
+
+// ══════════════════════════════════════════
+// RENDER: TODAY
+// ══════════════════════════════════════════
+
+function renderToday() {
+  const now = new Date();
+  const dateStr = toDateStr(now);
+  const dayName = DAYS[now.getDay()];
+  const dateFormatted = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  document.getElementById('today-date-str').textContent = `${dayName}, ${dateFormatted}`.toUpperCase();
+
+  const dl = daysUntil('2026-06-15');
+  document.getElementById('days-left-num').textContent = dl > 0 ? dl : '0';
+
+  // Exam banner
+  const examBanner = document.getElementById('exam-banner-today');
+  if (EXAM_DATES[dateStr]) {
+    examBanner.innerHTML = `
+      <div class="exam-banner">
+        <div class="exam-banner-icon">📝</div>
+        <div>
+          <div class="exam-banner-title">Exam Day</div>
+          <div class="exam-banner-sub">${EXAM_DATES[dateStr].join(' · ')}</div>
+        </div>
+      </div>`;
+  } else { examBanner.innerHTML = ''; }
+
+  // Notification prompt
+  const notifPrompt = document.getElementById('notif-prompt');
+  if (Notification.permission === 'default') {
+    notifPrompt.innerHTML = `
+      <div class="notif-banner" onclick="enableNotifs()">
+        <div class="notif-banner-icon">🔔</div>
+        <div class="notif-banner-text">
+          <h3>Enable Notifications</h3>
+          <p>Tap to get daily reminders for every step</p>
+        </div>
+      </div>`;
+  } else { notifPrompt.innerHTML = ''; }
+
+  // Timeline
+  const items = getDaySchedule(now);
+  const dateKey = getDateKey(now);
+  const tl = document.getElementById('timeline');
+
+  // Group by morning/afternoon/evening
+  const groups = [
+    { label: 'MORNING', range: ['00:00', '12:00'] },
+    { label: 'AFTERNOON', range: ['12:00', '18:00'] },
+    { label: 'EVENING', range: ['18:00', '23:59'] },
+  ];
+
+  let html = '';
+  const doneKeys = state[dateKey] || {};
+  let total = 0, done = 0;
+
+  for (const group of groups) {
+    const groupItems = items.filter(i => {
+      if (i.time === '—') return true;
+      return i.time >= group.range[0] && i.time < group.range[1];
+    });
+    if (groupItems.length === 0) continue;
+
+    html += `<div class="tl-group"><div class="tl-group-label">${group.label}</div>`;
+    for (const item of groupItems) {
+      const checked = doneKeys[item.id] || false;
+      if (!item.isExam) { total++; if (checked) done++; }
+      const doneClass = checked ? 'done' : '';
+      const examClass = item.isExam ? 'exam' : '';
+      html += `
+        <div class="tl-item ${doneClass} ${examClass}" onclick="toggleTimeline('${dateKey}','${item.id}')">
+          <div class="tl-dot"></div>
+          <div class="tl-time">${item.time}</div>
+          <div class="tl-content">
+            <div class="tl-name">${item.icon} ${item.name}</div>
+            ${item.sub ? `<div class="tl-sub">${item.sub}</div>` : ''}
+          </div>
+          ${!item.isExam ? `<div class="tl-check">${checked ? '✓' : ''}</div>` : ''}
+        </div>`;
+    }
+    html += '</div>';
+  }
+
+  tl.innerHTML = html;
+
+  // Update ring
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('ring-pct').textContent = pct + '%';
+  const circ = 188.5;
+  document.getElementById('ring-fill').style.strokeDashoffset = circ - (circ * pct / 100);
+}
+
+function toggleTimeline(dateKey, id) {
+  if (!state[dateKey]) state[dateKey] = {};
+  state[dateKey][id] = !state[dateKey][id];
+  saveState(state);
+  renderToday();
+}
+
+// ══════════════════════════════════════════
+// RENDER: CALENDAR
+// ══════════════════════════════════════════
+
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let selectedDay = null;
+
+function renderCalendar() {
+  document.getElementById('month-name').textContent = `${MONTHS[calMonth]} ${calYear}`;
+
+  const grid = document.getElementById('cal-grid');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth + 1, 0);
+  // Mon=0 offset
+  const startDow = (firstDay.getDay() + 6) % 7;
+
+  let html = '';
+  for (let i = 0; i < startDow; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const date = new Date(calYear, calMonth, d);
+    const dateStr = toDateStr(date);
+    const isToday = date.getTime() === today.getTime();
+    const isExam = !!EXAM_DATES[dateStr];
+    const isPast = date < today;
+    const isHaircut = dateStr === '2026-06-15';
+    const isSelected = selectedDay === dateStr;
+
+    let classes = 'cal-day';
+    if (isToday) classes += ' today';
+    if (isExam) classes += ' exam exam-dot';
+    if (isPast && !isToday) classes += ' past';
+    if (isHaircut) classes += ' haircut';
+    if (isSelected) classes += ' today';
+
+    html += `<div class="${classes}" onclick="selectDay('${dateStr}')">
+      <div class="cal-day-num">${d}</div>
+      ${isExam ? '' : '<div class="cal-day-dot" style="opacity:0"></div>'}
+    </div>`;
+  }
+
+  grid.innerHTML = html;
+  renderDayDetail();
+}
+
+function selectDay(dateStr) {
+  selectedDay = selectedDay === dateStr ? null : dateStr;
+  renderCalendar();
+}
+
+function renderDayDetail() {
+  const detail = document.getElementById('day-detail');
+  if (!selectedDay) { detail.innerHTML = ''; return; }
+
+  const date = new Date(selectedDay + 'T12:00:00');
+  const dayName = DAYS[date.getDay()];
+  const formatted = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+  const exams = EXAM_DATES[selectedDay];
+  const items = getDaySchedule(date);
+
+  let html = `<div class="day-detail-header">${dayName} ${formatted}</div>`;
+
+  if (exams) {
+    html += `<div class="exam-banner" style="margin:0 0 12px">
+      <div class="exam-banner-icon">📝</div>
+      <div><div class="exam-banner-title">Exam Day</div><div class="exam-banner-sub">${exams.join('<br>')}</div></div>
+    </div>`;
+  }
+
+  const tagColors = { gym:'tag-gym', skin:'tag-skin', food:'tag-food', supp:'tag-supp', rev:'tag-rev', exam:'tag-exam', run:'tag-run', other:'tag-other' };
+
+  for (const item of items) {
+    html += `<div class="day-event">
+      <div class="day-event-time">${item.time}</div>
+      <div class="day-event-name">${item.icon} ${item.name}</div>
+      <div class="day-event-tag ${tagColors[item.tag] || 'tag-other'}">${item.tag.toUpperCase()}</div>
+    </div>`;
+  }
+
+  detail.innerHTML = html;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  selectedDay = null;
+  renderCalendar();
+}
+
+// ══════════════════════════════════════════
+// RENDER: HABITS
+// ══════════════════════════════════════════
+
+function renderHabits() {
+  const dateKey = getDateKey();
+  const waterKey = `water-${dateKey}`;
+  const waterCount = state[waterKey] || 0;
+
+  // Water
+  let waterHtml = '';
+  for (let i = 0; i < 8; i++) {
+    const filled = i < waterCount;
+    waterHtml += `<div class="water-glass ${filled ? 'filled' : ''}" onclick="toggleWater(${i})">
+      <div class="water-fill"></div>
+    </div>`;
+  }
+  document.getElementById('water-track').innerHTML = waterHtml;
+  document.getElementById('water-count').textContent = waterCount;
+  document.getElementById('water-ml').textContent = waterCount * 500;
+
+  // Habits
+  const sections = {
+    morning: '🌅 Morning',
+    gym: '🏋️ Training',
+    evening: '🌙 Evening',
+    other: '⭐ General',
+  };
+
+  let html = '';
+  for (const [sectionKey, sectionLabel] of Object.entries(sections)) {
+    const sItems = HABITS_DATA.filter(h => h.section === sectionKey);
+    if (!sItems.length) continue;
+    html += `<div class="habit-section"><div class="card">
+      <div class="card-label">${sectionLabel}</div>`;
+    for (const habit of sItems) {
+      const checked = isChecked(`habit-${dateKey}`, habit.id);
+      html += `<div class="habit-item ${checked ? 'done' : ''}" onclick="toggleHabit('${dateKey}','${habit.id}')">
+        <div class="habit-check">${checked ? '✓' : ''}</div>
+        <div class="habit-icon">${habit.icon}</div>
+        <div class="habit-name">${habit.name}</div>
+      </div>`;
+    }
+    html += '</div></div>';
+  }
+  document.getElementById('habits-list').innerHTML = html;
+}
+
+function toggleWater(idx) {
+  const dateKey = getDateKey();
+  const waterKey = `water-${dateKey}`;
+  const cur = state[waterKey] || 0;
+  state[waterKey] = idx < cur ? idx : idx + 1;
+  saveState(state);
+  renderHabits();
+}
+
+function toggleHabit(dateKey, id) {
+  toggle(`habit-${dateKey}`, id);
+  renderHabits();
+}
+
+// ══════════════════════════════════════════
+// RENDER: SUPPLEMENTS
+// ══════════════════════════════════════════
+
+function renderSupplements() {
+  const dateKey = getDateKey();
+  const sections = [
+    { key: 'morning', label: '☀️ Morning — with breakfast', items: SUPPLEMENTS.morning },
+    { key: 'afterBreakfast', label: '💊 After breakfast', items: SUPPLEMENTS.afterBreakfast },
+    { key: 'postWorkout', label: '🏋️ Post workout', items: SUPPLEMENTS.postWorkout },
+    { key: 'evening', label: '🌙 Evening', items: SUPPLEMENTS.evening },
+  ];
+
+  let html = '';
+  for (const section of sections) {
+    html += `<div class="supp-time card" style="margin-bottom:12px">
+      <div class="supp-time-label">${section.label}</div>`;
+    for (const supp of section.items) {
+      const id = `${section.key}-${supp.name.replace(/\s/g,'-')}`;
+      const checked = isChecked(`supp-${dateKey}`, id);
+      html += `<div class="supp-item ${checked ? 'done' : ''}" onclick="toggleSupp('${dateKey}','${id}')">
+        <div class="supp-check">${checked ? '✓' : ''}</div>
+        <div class="supp-icon">${supp.icon}</div>
+        <div class="flex-1">
+          <div class="supp-name">${supp.name}</div>
+          <div class="supp-dose">${supp.dose}</div>
+          ${supp.note ? `<div class="supp-note">${supp.note}</div>` : ''}
+        </div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  document.getElementById('supp-list').innerHTML = html;
+}
+
+function toggleSupp(dateKey, id) {
+  toggle(`supp-${dateKey}`, id);
+  renderSupplements();
+}
+
+// ══════════════════════════════════════════
+// RENDER: SHOP
+// ══════════════════════════════════════════
+
+function renderShop() {
+  const tagMap = { skin: 'SKIN', supp: 'SUPPS', food: 'FOOD' };
+  const tagStyle = { skin: 'tag-skin', supp: 'tag-supp', food: 'tag-gym' };
+
+  function renderList(items, containerId) {
+    let html = '';
+    for (const item of items) {
+      const checked = isChecked('shop', item.id);
+      html += `<div class="shop-item ${checked ? 'done' : ''}" onclick="toggleShop('${item.id}')">
+        <div class="shop-check">${checked ? '✓' : ''}</div>
+        <div class="flex-1">
+          <div class="shop-name">${item.name}</div>
+          ${item.note ? `<div style="font-size:10px;color:var(--muted)">${item.note}</div>` : ''}
+        </div>
+        <div class="day-event-tag ${tagStyle[item.tag] || 'tag-other'}">${tagMap[item.tag] || item.tag.toUpperCase()}</div>
+      </div>`;
+    }
+    document.getElementById(containerId).innerHTML = html;
+  }
+
+  renderList(SHOP_ITEMS, 'shop-list');
+  renderList(FOOD_ITEMS, 'food-list');
+}
+
+function toggleShop(id) {
+  toggle('shop', id);
+  renderShop();
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('screen').scrollTop = 0;
+
+  if (name === 'today') renderToday();
+  if (name === 'calendar') renderCalendar();
+  if (name === 'habits') renderHabits();
+  if (name === 'supplements') renderSupplements();
+  if (name === 'shop') renderShop();
+}
+
+async function enableNotifs() {
+  const granted = await requestNotifications();
+  if (granted) {
+    await setupNotifications();
+    document.getElementById('notif-prompt').innerHTML = '';
+    // Show success
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#0a1a0a;border:1px solid #27ae6040;border-radius:6px;padding:14px 16px;margin:0 20px 16px;font-size:12px;color:#5dac6e;';
+    banner.textContent = '✅ Notifications enabled! You\'ll get reminders for every step.';
+    document.getElementById('exam-banner-today').after(banner);
+    setTimeout(() => banner.remove(), 4000);
+  }
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+
+async function init() {
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    try {
+      await navigator.serviceWorker.register('./sw.js', { scope: '/glowup/' });
+      console.log('SW registered');
+      if (Notification.permission === 'granted') {
+        setTimeout(setupNotifications, 1000);
+      }
+    } catch(e) { console.log('SW failed:', e); }
+  }
+
+  renderToday();
+  renderCalendar();
+}
+
+init();
+</script>
+</body>
+</html>
