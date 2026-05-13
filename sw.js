@@ -1,70 +1,62 @@
-const CACHE_NAME = 'glowup-v1';
-const urlsToCache = ['./', './index.html', './manifest.json'];
+const CACHE = 'theplan-v1';
+const FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(urlsToCache)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(clients.claim());
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+  );
+  return self.clients.claim();
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
 
-self.addEventListener('push', e => {
-  const data = e.data ? e.data.json() : {};
-  const title = data.title || 'Glow Up';
-  const options = {
-    body: data.body || '',
-    icon: './icon-192.png',
-    badge: './icon-192.png',
-    vibrate: [200, 100, 200],
-    tag: data.tag || 'glowup',
-    renotify: true,
-    data: { url: data.url || './' }
-  };
-  e.waitUntil(self.registration.showNotification(title, options));
-});
+let schedule = [];
 
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data.url || './'));
-});
-
-// Local notification scheduling via message passing
 self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'SCHEDULE_NOTIFICATIONS') {
-    // Store notification schedule
-    self.notificationSchedule = e.data.schedule;
+  if (e.data?.type === 'SCHEDULE') {
+    schedule = e.data.schedule || [];
   }
 });
 
-// Check and fire local notifications every minute
+// Check every minute and fire matching notifications
 setInterval(async () => {
-  if (!self.notificationSchedule) return;
+  if (!schedule.length) return;
   const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
-  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit',
+    hour12: false, weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(now);
+  const p = {};
+  parts.forEach(x => p[x.type] = x.value);
+  const timeStr = `${p.hour}:${p.minute}`;
+  const dateStr = `${p.year}-${p.month}-${p.day}`;
+  const dowMap = {Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:0};
+  const dow = dowMap[p.weekday] ?? -1;
 
-  for (const notif of self.notificationSchedule) {
-    if (notif.time !== timeStr) continue;
-    if (notif.days && !notif.days.includes(dayOfWeek)) continue;
-    if (notif.from && dateStr < notif.from) continue;
-    if (notif.until && dateStr > notif.until) continue;
-
-    await self.registration.showNotification(notif.title, {
-      body: notif.body,
-      icon: './icon-192.png',
-      badge: './icon-192.png',
+  for (const n of schedule) {
+    if (n.time !== timeStr) continue;
+    if (n.days && !n.days.includes(dow)) continue;
+    if (n.from && dateStr < n.from) continue;
+    if (n.until && dateStr > n.until) continue;
+    await self.registration.showNotification(n.title, {
+      body: n.body || '',
+      icon: './icon.png',
+      badge: './icon.png',
       vibrate: [200, 100, 200],
-      tag: notif.tag || notif.time,
+      tag: n.tag || n.time,
       renotify: true
     });
   }
 }, 60000);
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow('./'));
+});
