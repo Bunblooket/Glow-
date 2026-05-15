@@ -1,0 +1,25 @@
+{
+  "name": "The Plan",
+  "short_name": "The Plan",
+  "description": "Your 35-day glow up — 16 May to 19 June",
+  "start_url": "/glowup/index.html",
+  "scope": "/glowup/",
+  "display": "standalone",
+  "background_color": "#06060f",
+  "theme_color": "#06060f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/glowup/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/glowup/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
