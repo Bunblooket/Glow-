@@ -59,7 +59,7 @@ body{background:var(--bg);min-height:100vh;min-height:-webkit-fill-available;dis
   display:flex;padding-bottom:8px;z-index:100;
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 }
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--t3);font-family:var(--fm);font-size:7px;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;padding:0}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;color:var(--t3);font-family:var(--fm);font-size:6px;letter-spacing:.08em;text-transform:uppercase;transition:color .2s;padding:0}
 .nb.active{color:var(--a)}
 .nb svg{width:20px;height:20px;transition:transform .18s var(--spring)}
 .nb svg path,.nb svg circle,.nb svg rect,.nb svg line,.nb svg polyline,.nb svg ellipse,.nb svg polygon{stroke:var(--t3);transition:stroke .2s}
@@ -473,6 +473,52 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
 .sh-n{font-size:11.5px;color:var(--t);line-height:1.3;font-family:var(--fs);font-weight:600}
 .sh-no{font-size:8.5px;color:var(--t3);margin-top:2px;font-family:var(--fm)}
 .sh-tg{font-size:7px;letter-spacing:.1em;padding:2px 7px;border-radius:9px;border:1px solid;flex-shrink:0;margin-top:3px;text-transform:uppercase;font-weight:500;font-family:var(--fm);align-self:flex-start}
+
+/* ════════════════ LOGIN ════════════════ */
+#pg-login{position:fixed;inset:0;background:var(--bg);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;animation:pgIn .4s var(--ease)}
+.login-logo{width:80px;height:80px;margin-bottom:28px}
+.login-title{font-family:var(--fs);font-size:34px;font-weight:800;color:var(--t);letter-spacing:-.02em;margin-bottom:6px;text-align:center}
+.login-sub{font-size:10px;color:var(--t3);letter-spacing:.08em;text-align:center;margin-bottom:40px;font-family:var(--fm);text-transform:uppercase}
+.login-field{width:100%;margin-bottom:12px}
+.login-label{font-size:9px;color:var(--t3);letter-spacing:.15em;text-transform:uppercase;font-family:var(--fm);margin-bottom:6px;display:block}
+.login-input{width:100%;background:var(--b3);border:1px solid var(--br2);border-radius:12px;padding:13px 16px;font-family:var(--fm);font-size:14px;color:var(--t);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.login-input:focus{border-color:var(--a)}
+.login-btn{width:100%;padding:14px;background:var(--a);color:#fff;border:none;border-radius:12px;font-family:var(--fs);font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s;letter-spacing:.01em}
+.login-btn:active{opacity:.8}
+.login-err{font-size:10px;color:#f87171;text-align:center;margin-top:10px;font-family:var(--fm);min-height:16px}
+.login-hint{font-size:9px;color:var(--t4);text-align:center;margin-top:20px;font-family:var(--fm);line-height:1.6}
+
+/* ════════════════ SETTINGS ════════════════ */
+#pg-settings{padding:0}
+.settings-head{padding:52px 20px 14px;background:linear-gradient(180deg,var(--b1) 0%,transparent 100%)}
+.settings-section{margin:0 20px 10px;background:var(--card);border:1px solid var(--br);border-radius:16px;overflow:hidden}
+.settings-section-label{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3);padding:12px 16px 6px;font-family:var(--fm)}
+.setting-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--br);cursor:pointer;transition:background .15s}
+.setting-row:last-child{border-bottom:none}
+.setting-row:active{background:var(--b3)}
+.setting-row.destructive .setting-label{color:#f87171}
+.setting-row.destructive .setting-icon{color:#f87171}
+.setting-icon{font-size:18px;flex-shrink:0;width:22px;text-align:center}
+.setting-info{flex:1}
+.setting-label{font-size:12px;color:var(--t);font-family:var(--fs);font-weight:600}
+.setting-desc{font-size:9px;color:var(--t3);margin-top:1px;font-family:var(--fm)}
+.setting-value{font-size:10px;color:var(--t3);font-family:var(--fm)}
+/* Toggle switch */
+.toggle{width:42px;height:24px;background:var(--b4);border-radius:12px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0;border:1px solid var(--br2)}
+.toggle.on{background:var(--a);border-color:var(--a)}
+.toggle-knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:9px;background:#fff;transition:transform .25s var(--spring);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.toggle.on .toggle-knob{transform:translateX(18px)}
+/* Confirm modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:3000;display:flex;align-items:flex-end;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-box{background:var(--card2);border:1px solid var(--br2);border-radius:20px;padding:24px;width:100%;max-width:360px;animation:pgIn .25s var(--ease)}
+.modal-title{font-family:var(--fs);font-size:20px;font-weight:700;color:var(--t);margin-bottom:8px}
+.modal-body{font-size:11px;color:var(--t2);line-height:1.5;font-family:var(--fm);margin-bottom:20px}
+.modal-btns{display:flex;gap:10px}
+.modal-btn{flex:1;padding:12px;border-radius:11px;border:none;font-family:var(--fs);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.modal-btn:active{opacity:.7}
+.modal-cancel{background:var(--b4);color:var(--t2)}
+.modal-confirm{background:#ef4444;color:#fff}
+.modal-confirm.blue{background:var(--a)}
 </style>
 </head>
 <body>
@@ -487,6 +533,46 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
   </div>
 
   <div id="screen">
+
+    <!-- LOGIN -->
+    <div id="pg-login">
+      <svg class="login-logo" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect width="80" height="80" fill="#06060f" rx="18"/>
+        <circle cx="40" cy="40" r="26" fill="none" stroke="url(#lg1)" stroke-width="4" stroke-linecap="round"
+          stroke-dasharray="122 41" stroke-dashoffset="-10"/>
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#4f8ef7"/><stop offset="100%" stop-color="#7aabff"/>
+          </linearGradient>
+        </defs>
+        <path d="M40,22 L50,38 L44,38 L44,52 Q44,54 42,54 L38,54 Q36,54 36,52 L36,38 L30,38 Z" fill="white" opacity=".95"/>
+      </svg>
+      <div class="login-title">The <span style="color:var(--a)">Plan</span></div>
+      <div class="login-sub">Your 35-day glow up</div>
+      <div class="login-field">
+        <label class="login-label">Username</label>
+        <input class="login-input" id="login-user" type="text" placeholder="Enter username" autocomplete="username" autocapitalize="none">
+      </div>
+      <div class="login-field">
+        <label class="login-label">Password</label>
+        <input class="login-input" id="login-pass" type="password" placeholder="Enter password" autocomplete="current-password">
+      </div>
+      <button class="login-btn" onclick="doLogin()">Sign In</button>
+      <div class="login-err" id="login-err"></div>
+      <div class="login-hint">Username: <strong style="color:var(--t2)">raef</strong> &nbsp;·&nbsp; Password: <strong style="color:var(--t2)">glowup2026</strong></div>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="modal-overlay" id="modal-overlay" style="display:none" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-title" id="modal-title">Are you sure?</div>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-btns">
+          <button class="modal-btn modal-cancel" onclick="closeModal()">Cancel</button>
+          <button class="modal-btn modal-confirm" id="modal-confirm-btn" onclick="modalConfirm()">Confirm</button>
+        </div>
+      </div>
+    </div>
     <svg width="0" height="0" style="position:absolute">
       <defs>
         <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4f8ef7"/><stop offset="100%" stop-color="#7aabff"/></linearGradient>
@@ -514,7 +600,7 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
       <div class="cd">
         <div class="cd-n" id="cdn">34</div>
         <div class="cd-r">
-          <div class="cd-lbl">Days to 15 June</div>
+          <div class="cd-lbl">Days to 19 June</div>
           <div class="cd-sub">Final exam · Haircut</div>
           <div class="cd-bar" style="margin-top:7px"><div class="cd-fill" id="cdfill" style="width:0%"></div></div>
         </div>
@@ -653,6 +739,138 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
       <div class="pg-head"><div class="eyebrow">Shopping</div><div class="pg-title">Buy List</div></div>
       <div id="sh-root"></div>
     </div>
+
+    <!-- SETTINGS -->
+    <div id="pg-settings" class="page">
+      <div class="settings-head">
+        <div class="eyebrow">Preferences</div>
+        <div class="pg-title">Settings</div>
+      </div>
+
+      <!-- Account -->
+      <div class="settings-section-label">Account</div>
+      <div class="settings-section">
+        <div class="setting-row">
+          <div class="setting-icon">👤</div>
+          <div class="setting-info">
+            <div class="setting-label">Signed in as</div>
+            <div class="setting-desc">raef · The Plan 2026</div>
+          </div>
+        </div>
+        <div class="setting-row" onclick="confirmAction('signout')">
+          <div class="setting-icon" style="color:#f87171">🚪</div>
+          <div class="setting-info">
+            <div class="setting-label" style="color:#f87171">Sign out</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-section-label">Notifications</div>
+      <div class="settings-section" id="notif-settings">
+        <div class="setting-row" onclick="toggleSetting('notif-master')">
+          <div class="setting-icon">🔔</div>
+          <div class="setting-info">
+            <div class="setting-label">All notifications</div>
+            <div class="setting-desc">Master toggle</div>
+          </div>
+          <div class="toggle" id="tog-notif-master"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-row" onclick="toggleSetting('notif-skin')">
+          <div class="setting-icon">🧴</div>
+          <div class="setting-info"><div class="setting-label">Skincare reminders</div></div>
+          <div class="toggle on" id="tog-notif-skin"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-row" onclick="toggleSetting('notif-gym')">
+          <div class="setting-icon">🏋️</div>
+          <div class="setting-info"><div class="setting-label">Gym reminders</div></div>
+          <div class="toggle on" id="tog-notif-gym"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-row" onclick="toggleSetting('notif-supp')">
+          <div class="setting-icon">💊</div>
+          <div class="setting-info"><div class="setting-label">Supplement reminders</div></div>
+          <div class="toggle on" id="tog-notif-supp"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-row" onclick="toggleSetting('notif-water')">
+          <div class="setting-icon">💧</div>
+          <div class="setting-info"><div class="setting-label">Water checks</div></div>
+          <div class="toggle on" id="tog-notif-water"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-row" onclick="toggleSetting('notif-rev')">
+          <div class="setting-icon">📚</div>
+          <div class="setting-info"><div class="setting-label">Revision reminders</div></div>
+          <div class="toggle on" id="tog-notif-rev"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-row" onclick="toggleSetting('notif-sleep')">
+          <div class="setting-icon">🌙</div>
+          <div class="setting-info"><div class="setting-label">Sleep reminder</div></div>
+          <div class="toggle on" id="tog-notif-sleep"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div class="settings-section-label">Appearance</div>
+      <div class="settings-section">
+        <div class="setting-row" onclick="toggleThemeS()">
+          <div class="setting-icon">🌗</div>
+          <div class="setting-info">
+            <div class="setting-label">Dark mode</div>
+          </div>
+          <div class="toggle on" id="tog-dark"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="settings-section-label">Progress</div>
+      <div class="settings-section">
+        <div class="setting-row" onclick="confirmAction('resetday')">
+          <div class="setting-icon">📅</div>
+          <div class="setting-info">
+            <div class="setting-label">Reset today's progress</div>
+            <div class="setting-desc">Clear all ticks for today only</div>
+          </div>
+          <div class="setting-value">›</div>
+        </div>
+        <div class="setting-row" onclick="confirmAction('dayone')">
+          <div class="setting-icon">🔄</div>
+          <div class="setting-info">
+            <div class="setting-label">Make today Day 1</div>
+            <div class="setting-desc">Resets the 35-day countdown to start from today</div>
+          </div>
+          <div class="setting-value">›</div>
+        </div>
+        <div class="setting-row" onclick="confirmAction('resetall')">
+          <div class="setting-icon" style="color:#f87171">🗑️</div>
+          <div class="setting-info">
+            <div class="setting-label" style="color:#f87171">Reset all progress</div>
+            <div class="setting-desc">Clears every tick, log and habit — cannot be undone</div>
+          </div>
+          <div class="setting-value" style="color:#f87171">›</div>
+        </div>
+      </div>
+
+      <!-- Plan info -->
+      <div class="settings-section-label">About</div>
+      <div class="settings-section">
+        <div class="setting-row">
+          <div class="setting-icon">📋</div>
+          <div class="setting-info">
+            <div class="setting-label">The Plan</div>
+            <div class="setting-desc">Version 1.0 · Built for Raef · 16 May – 19 June 2026</div>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-icon">🎯</div>
+          <div class="setting-info">
+            <div class="setting-label">Goal</div>
+            <div class="setting-desc">Grade 9s · Glow up · 15 June haircut</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    </div>
+
   </div>
 
   <nav class="nav">
@@ -663,6 +881,7 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
     <button class="nb" onclick="NV('stats',this)"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10" stroke-width="1.5"/><line x1="12" y1="20" x2="12" y2="4" stroke-width="1.5"/><line x1="6" y1="20" x2="6" y2="14" stroke-width="1.5"/></svg><span>Stats</span></button>
     <button class="nb" onclick="NV('meals',this)"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" stroke-width="1.5"/></svg><span>Meals</span></button>
     <button class="nb" onclick="NV('supps',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><line x1="12" y1="8" x2="12" y2="16" stroke-width="1.5"/><line x1="8" y1="12" x2="16" y2="12" stroke-width="1.5"/></svg><span>Supps</span></button>
+    <button class="nb" onclick="NV('settings',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke-width="1.5"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke-width="1.5"/></svg><span>Settings</span></button>
   </nav>
 </div>
 
@@ -712,8 +931,8 @@ const TUTOR_END={0:'11:00',2:'18:00',3:'11:00',4:'11:00',5:'12:00',6:'10:30'};
 const MNS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MNF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DNF=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const START=new Date(2026,4,12);// May 12
-const END=new Date(2026,5,15);  // June 15
+const START=new Date(2026,4,16);// May 16 — Day 1
+const END=new Date(2026,5,19);  // June 19
 
 function gym(date){const ds=dk(date);return SWAPS[ds]||GYM[date.getDay()]||null}
 
@@ -737,11 +956,11 @@ function sched(date){
   add('09:23','Eyebrow serum + brow massage','skin','Apply serum, then 30 sec circular massage to boost circulation','brow');
   add('09:26','Morning journal','other','3 priorities for today. 3 minutes. Lowers cortisol.','journal');
   if(isExam){add('—','Exam day','exam',isExam.join(' · '),'exam-day');add('09:30','Light revision — key facts only','rev','Max 2 hours. No new content. Calm review only.','rev-exam')}
-  else add('09:30','Revision block 1','rev','~3.5 hours — hardest subject first while mind is sharpest','rev1');
+  else add('09:30','Revision block 1','rev','~3 hours — hardest subject first. 7-8 hours total today.','rev1');
   add('11:00','Water check','other','Should be on glass 2 — 1000ml done','w1');
   if(tu&&+tu.split(':')[0]<13)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
   add('13:00','Lunch','food','Large carbs + protein. Eat until full. Rice or pasta + chicken or mince + olive oil.','lunch');
-  if(!isExam)add('13:30','Revision block 2','rev','~2.5 hours','rev2');
+  if(!isExam)add('13:30','Revision block 2','rev','~2.5 hours — practice questions and past papers','rev2');
   add('15:00','Water check','other','Should be on glass 4 — 2000ml done','w2');
   if(tu&&+tu.split(':')[0]>=11&&+tu.split(':')[0]<17)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
   if(g){
@@ -753,7 +972,7 @@ function sched(date){
   if(tu&&+tu.split(':')[0]>=17)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
   add('18:00','Protein shake + creatine','supp','2 scoops dairy-free in oat milk · 5g creatine post-workout for best absorption','shake');
   add('18:30','Dinner','food','Protein heavy · double carbs · eat big. Biggest meal of the day.','dinner');
-  if(!isExam)add('19:30','Revision block 3','rev','~1.5 hours — consolidation + practice questions','rev3');
+  if(!isExam)add('19:30','Revision block 3','rev','~1.5 to 2 hours — consolidation. Total: 7-8 hours.','rev3');
   add('21:00','Water check','other','Finish remaining — 3.5–4L total for the day','w3');
   add('21:30','Dandelion tea','supp','Wind down begins. Digestive support.','dantea');
   add('21:45','Red light mask — evening','skin','8 mins — second session','rlm-pm');
@@ -761,8 +980,8 @@ function sched(date){
   add('22:10','Lip balm','skin','CeraVe or Vaseline. Differin dries lips.','lip');
   add('22:15','Evening supplements','supp','Ashwagandha · Magnesium Glycinate · Collagen Peptides — sleep stack','supp-pm');
   add('22:30','No phone — wind down','other','30 mins screen-free. Blue light counteracts ashwagandha.','nophone');
-  if(ds>='2026-06-01'&&ds<='2026-06-15')add('22:40','Teeth whitening strips','skin','HiSmile PAP+ sensitive · 30 mins. Start 1 June.','teeth');
-  if(isLast)add('—','Glow up complete — haircut day','other','35 days executed. Physics P2 done. Book haircut.','final');
+  if(ds>='2026-06-01'&&ds<='2026-06-19')add('22:40','Teeth whitening strips','skin','HiSmile PAP+ sensitive · 30 mins. Start 1 June.','teeth');
+  if(isLast)add('—','Glow up complete — haircut day','other','35 days of the plan done. Book haircut.','final');
   add('23:00','Sleep','other','8+ hours. Skin repairs, muscle grows, HGH released during deep sleep.','sleep');
   items.sort((a,b)=>a.mins-b.mins);
   return items;
@@ -964,7 +1183,7 @@ function sD(ds){selD=selD===ds?null:ds;RC()}
 function RDP(){
   const root=document.getElementById('dp-root');
   if(!selD){root.innerHTML='';return}
-  const date=new Date(selD.split('-').map((v,i)=>i===1?+v-1:+v));
+  const parts2=selD.split('-');const date=new Date(+parts2[0],+parts2[1]-1,+parts2[2]);
   const exams=EXAMS[selD],items=sched(date);
   let html=`<div class="dp"><div class="dp-hd">${DNF[date.getDay()]} ${date.getDate()} ${MNS[date.getMonth()]}</div>`;
   if(exams)html+=`<div class="exam-alert" style="margin:0 0 10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.6" stroke-linecap="round" style="flex-shrink:0"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><div><div class="ea-t" style="font-size:11px">Exam</div><div class="ea-s">${exams.join('<br>')}</div></div></div>`;
@@ -1425,8 +1644,9 @@ function RSH(){
 function TSH(n){if(!S['sh'])S['sh']={};S['sh'][n]=!S['sh'][n];save();RSH()}
 
 // ══ NAV ══
-const RFN={today:RT,cal:RC,habits:RH,stats:RS,workout:RW,meals:RM,supps:RSP,shop:RSH};
+const RFN={today:RT,cal:RC,habits:RH,stats:RS,workout:RW,meals:RM,supps:RSP,shop:RSH,settings:RS_settings};
 function NV(name,btn){
+  if(!checkAuth()) return;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById(`pg-${name}`).classList.add('active');
@@ -1482,7 +1702,7 @@ const NOTIF_SCHEDULE=[
 async function initPWA(){
   if(!('serviceWorker' in navigator))return;
   try{
-    const reg=await navigator.serviceWorker.register('./sw.js',{scope:'/glowup/'});
+    const reg=await navigator.serviceWorker.register('/glowup/sw.js');
     await navigator.serviceWorker.ready;
     const sw=reg.active||reg.waiting||reg.installing;
     if(sw)sw.postMessage({type:'SCHEDULE',schedule:NOTIF_SCHEDULE});
@@ -1499,7 +1719,7 @@ async function enableNotifications(){
   if(p==='granted'){
     if(btn)btn.remove();
     const reg=await navigator.serviceWorker.ready;
-    reg.active?.postMessage({type:'SCHEDULE',schedule:NOTIF_SCHEDULE});
+    reg.active?.postMessage({type:'SCHEDULE',schedule:getFilteredSchedule()});
     const ok=document.createElement('div');
     ok.style.cssText='margin:0 20px 8px;padding:9px 13px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:11px;font-size:10px;color:#4ade80;font-family:var(--fm)';
     ok.textContent='Notifications enabled. Reminders active for every step.';
@@ -1518,12 +1738,193 @@ function showNotifBanner(){
   el.onclick=enableNotifications;
   document.getElementById('tl-root')?.before(el);
 }
+
+// ══ AUTH ══
+const CREDS = {username:'raef', password:'glowup2026'};
+
+function checkAuth(){
+  const loggedIn = localStorage.getItem('tp-auth') === 'yes';
+  const loginPage = document.getElementById('pg-login');
+  if(loggedIn){
+    if(loginPage) loginPage.style.display='none';
+  } else {
+    if(loginPage) loginPage.style.display='flex';
+  }
+  return loggedIn;
+}
+
+function doLogin(){
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if(u === CREDS.username && p === CREDS.password){
+    localStorage.setItem('tp-auth','yes');
+    const loginPage = document.getElementById('pg-login');
+    loginPage.style.animation='none';
+    loginPage.style.opacity='0';
+    loginPage.style.transition='opacity .3s';
+    setTimeout(()=>{ loginPage.style.display='none'; RT(); }, 300);
+    err.textContent='';
+  } else {
+    err.textContent='Incorrect username or password';
+    document.getElementById('login-pass').value='';
+    const inp = document.getElementById('login-user');
+    inp.style.borderColor='#f87171';
+    setTimeout(()=>inp.style.borderColor='',1500);
+  }
+}
+
+// Allow Enter key on login
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && document.getElementById('pg-login')?.style.display !== 'none'){
+    doLogin();
+  }
+});
+
+function signOut(){
+  localStorage.removeItem('tp-auth');
+  location.reload();
+}
+
+// ══ MODAL ══
+let modalAction = null;
+function confirmAction(action){
+  modalAction = action;
+  const overlay = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+  const body = document.getElementById('modal-body');
+  const btn = document.getElementById('modal-confirm-btn');
+  
+  const configs = {
+    signout: {
+      title:'Sign out?',
+      body:'You will need to sign back in with your username and password.',
+      btn:'Sign out', cls:'blue'
+    },
+    resetday: {
+      title:'Reset today?',
+      body:'All ticks and completions for today will be cleared. Your logs and streaks from other days are kept.',
+      btn:'Reset today', cls:''
+    },
+    dayone: {
+      title:'Make today Day 1?',
+      body:'The 35-day countdown will restart from today. All previous progress is kept but the end date changes.',
+      btn:'Restart countdown', cls:'blue'
+    },
+    resetall: {
+      title:'Reset everything?',
+      body:'This permanently deletes all your ticks, habit data, logs, and progress. This cannot be undone.',
+      btn:'Delete everything', cls:''
+    }
+  };
+  
+  const cfg = configs[action] || {title:'Are you sure?', body:'', btn:'Confirm', cls:''};
+  title.textContent = cfg.title;
+  body.textContent = cfg.body;
+  btn.textContent = cfg.btn;
+  btn.className = 'modal-btn modal-confirm' + (cfg.cls ? ' '+cfg.cls : '');
+  overlay.style.display = 'flex';
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').style.display='none';
+  modalAction = null;
+}
+
+function modalConfirm(){
+  if(modalAction === 'signout') signOut();
+  else if(modalAction === 'resetday'){
+    delete S[tk()];
+    save(); RT(); closeModal();
+  }
+  else if(modalAction === 'dayone'){
+    // Store new start date
+    S['custom-start'] = tk();
+    save(); closeModal();
+    alert('Day 1 reset to today. The countdown now ends 35 days from today.');
+  }
+  else if(modalAction === 'resetall'){
+    localStorage.removeItem('tp4');
+    S = {};
+    save(); RT(); RH(); closeModal();
+  }
+  closeModal();
+}
+
+// ══ SETTINGS ══
+function RS_settings(){
+  // Load toggles from state
+  const settings = S['settings'] || {};
+  const defaults = {'notif-master':true,'notif-skin':true,'notif-gym':true,'notif-supp':true,'notif-water':true,'notif-rev':true,'notif-sleep':true};
+  
+  for(const [key, def] of Object.entries(defaults)){
+    const val = settings[key] !== undefined ? settings[key] : def;
+    const el = document.getElementById(`tog-${key}`);
+    if(el){
+      el.className = 'toggle' + (val ? ' on' : '');
+    }
+  }
+  
+  // Dark mode toggle
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const darkTog = document.getElementById('tog-dark');
+  if(darkTog) darkTog.className = 'toggle' + (isDark ? ' on' : '');
+}
+
+function toggleSetting(key){
+  if(!S['settings']) S['settings'] = {};
+  const defaults = {'notif-master':true,'notif-skin':true,'notif-gym':true,'notif-supp':true,'notif-water':true,'notif-rev':true,'notif-sleep':true};
+  const cur = S['settings'][key] !== undefined ? S['settings'][key] : (defaults[key] ?? true);
+  S['settings'][key] = !cur;
+  save();
+  RS_settings();
+}
+
+function toggleThemeS(){
+  TH();
+  RS_settings();
+}
+
+// ══ NOTIFICATION FILTERING BY SETTINGS ══
+function getFilteredSchedule(){
+  const settings = S['settings'] || {};
+  const master = settings['notif-master'] !== false;
+  if(!master) return [];
+  
+  const tagFilters = {
+    skin: settings['notif-skin'] !== false,
+    gym: settings['notif-gym'] !== false,
+    supp: settings['notif-supp'] !== false,
+    water: settings['notif-water'] !== false,
+    rev: settings['notif-rev'] !== false,
+    sleep: settings['notif-sleep'] !== false,
+  };
+  
+  const skinTags = ['wake','oil','shower','ice','skin-am','rlm-am','brow','skin-pm','rlm-pm','lip','teeth'];
+  const gymTags = ['run','dehang','dehang-tue','gym','gym-tue'];
+  const suppTags = ['supp-am','antibiotic','shake','dantea','supp-pm'];
+  const waterTags = ['w1','w2','w3'];
+  const revTags = ['tutor-mon','tutor-tue','tutor-wed','tutor-thu','tutor-fri','tutor-sat','tutor-sun'];
+  const sleepTags = ['sleep','nophone'];
+  
+  return NOTIF_SCHEDULE.filter(n => {
+    if(skinTags.includes(n.tag) && !tagFilters.skin) return false;
+    if(gymTags.includes(n.tag) && !tagFilters.gym) return false;
+    if(suppTags.includes(n.tag) && !tagFilters.supp) return false;
+    if(waterTags.includes(n.tag) && !tagFilters.water) return false;
+    if(revTags.includes(n.tag) && !tagFilters.rev) return false;
+    if(sleepTags.includes(n.tag) && !tagFilters.sleep) return false;
+    return true;
+  });
+}
+
 // ══ INIT ══
 tick();
 setInterval(()=>{tick();if(document.getElementById('pg-today').classList.contains('active'))RT()},60000);
-RT();RC();
+checkAuth();
+if(localStorage.getItem('tp-auth')==='yes'){RT();RC();}
 initPWA();
-setTimeout(showNotifBanner,1000);
+setTimeout(()=>{if(localStorage.getItem('tp-auth')==='yes')showNotifBanner();},1000);
 </script>
 </body>
 </html>

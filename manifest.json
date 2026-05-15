@@ -2,14 +2,24 @@
   "name": "The Plan",
   "short_name": "The Plan",
   "description": "Your daily glow up tracker — now to 15 June",
-  "start_url": "/glowup/",
+  "start_url": "/glowup/index.html",
   "scope": "/glowup/",
   "display": "standalone",
-  "background_color": "#050508",
-  "theme_color": "#050508",
+  "background_color": "#06060f",
+  "theme_color": "#06060f",
   "orientation": "portrait-primary",
   "icons": [
-    { "src": "icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/glowup/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/glowup/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
