@@ -863,7 +863,7 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
           <div class="setting-icon">🎯</div>
           <div class="setting-info">
             <div class="setting-label">Goal</div>
-            <div class="setting-desc">Grade 9s · Glow up · 15 June haircut</div>
+            <div class="setting-desc">Grade 9s · Glow up · 19 June haircut</div>
           </div>
         </div>
       </div>
@@ -941,7 +941,7 @@ function sched(date){
   const dow=date.getDay(),ds=dk(date);
   const g=gym(date),isLeg=g&&g.includes('Leg'),noRun=isLeg||dow===0;
   const gt=dow===2?'15:30':'16:30';
-  const tu=TUTOR[dow],te=TUTOR_END[dow],isExam=EXAMS[ds],isLast=ds==='2026-06-15';
+  const tu=TUTOR[dow],te=TUTOR_END[dow],isExam=EXAMS[ds],isLast=ds==='2026-06-19';
   const items=[],add=(t,n,c,s,id)=>{const mins=t==='—'?9999:+t.split(':')[0]*60+ +t.split(':')[1];items.push({time:t,name:n,cat:c,sub:s||'',id:id||(t+n).replace(/\W/g,''),mins})};
   add('07:30','Wake — cold shower immediately','skin','30–60 secs cold. Aligns cortisol with circadian rhythm.','wake');
   add('07:40','Oil pulling','skin','5 mins coconut oil before eating or drinking anything','oil');
@@ -1163,7 +1163,7 @@ function RC(){
     const date=new Date(cY,cMo,d),ds=dk(date);
     const today2=new Date(todP.year,todP.month,todP.day);
     const isT=date.getTime()===today2.getTime(),isE=!!EXAMS[ds];
-    const isPast=date<today2,isH=ds==='2026-06-15',isSel=selD===ds;
+    const isPast=date<today2,isH=ds==='2026-06-19',isSel=selD===ds;
     const g2=gym(date),hasRun=g2&&!g2.includes('Leg')&&date.getDay()!==0;
     let cls='cal-c';
     if(isPast&&!isT)cls+=' past';if(isT)cls+=' today';
