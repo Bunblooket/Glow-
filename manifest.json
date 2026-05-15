@@ -1,7 +1,7 @@
 {
   "name": "The Plan",
   "short_name": "The Plan",
-  "description": "Your daily glow up tracker — now to 15 June",
+  "description": "Your 35-day glow up — 16 May to 19 June",
   "start_url": "/glowup/index.html",
   "scope": "/glowup/",
   "display": "standalone",

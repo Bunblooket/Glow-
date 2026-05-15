@@ -1703,7 +1703,7 @@ const NOTIF_SCHEDULE=[
 async function initPWA(){
   if(!('serviceWorker' in navigator))return;
   try{
-    const reg=await navigator.serviceWorker.register('/glowup/sw.js');
+    const reg=await navigator.serviceWorker.register('./sw.js', {scope: '/glowup/'});
     await navigator.serviceWorker.ready;
     const sw=reg.active||reg.waiting||reg.installing;
     if(sw)sw.postMessage({type:'SCHEDULE',schedule:NOTIF_SCHEDULE});
