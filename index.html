@@ -81,7 +81,6 @@ body{background:var(--bg);min-height:100vh;min-height:-webkit-fill-available;dis
 .theme-btn{background:var(--b3);border:1px solid var(--br2);border-radius:12px;padding:3px 9px;cursor:pointer;font-size:8px;color:var(--t2);font-family:var(--fm);letter-spacing:.05em;flex-shrink:0}
 .theme-btn:active{opacity:.6}
 
-function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline points="1,4 4,7 10,1" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
 
 /* ════════════════ TODAY ════════════════ */
 #pg-today{padding:0}
@@ -889,6 +888,16 @@ function ck(){return`<svg width="11" height="8" viewBox="0 0 11 8"><polyline poi
 <script>
 'use strict';
 
+// ── GitHub Pages PWA 404 redirect handler ──
+(function(){
+  var redirect = sessionStorage.getItem('redirect');
+  if(redirect && redirect !== location.pathname){
+    sessionStorage.removeItem('redirect');
+    // Already on index.html, nothing to redirect
+  }
+})();
+
+
 // ══ CORRECT UK TIME via Intl ══
 function ukParts(){
   const now=new Date();
@@ -925,7 +934,7 @@ const EXAMS={
   '2026-06-12':['Chemistry P2 — AM'],
   '2026-06-15':['Physics P2 — AM · Final exam','Haircut — transformation complete']
 };
-const GYM={1:'Push — Chest · Shoulders · Tris',2:'Pull — Back · Biceps',3:'Legs + Abs',4:'Skill + Arms',5:'Push or Pull',6:'Legs + Abs',0:'Skill / Optional'};
+const GYM={1:'Push — Chest · Shoulders · Tris',2:'Pull — Back · Biceps',3:'Legs + Abs',4:'Skill + Arms',5:'Push or Pull',6:'Legs + Abs',0:null};
 const SWAPS={'2026-06-01':'Legs + Abs','2026-06-03':'Push — Chest · Shoulders · Tris','2026-06-08':'Legs + Abs','2026-06-10':'Push — Chest · Shoulders · Tris'};
 const TUTOR={0:'10:00',2:'17:00',3:'10:00',4:'10:00',5:'11:00',6:'09:00'};
 const TUTOR_END={0:'11:00',2:'18:00',3:'11:00',4:'11:00',5:'12:00',6:'10:30'};
@@ -941,49 +950,114 @@ function gym(date){const ds=dk(date);return SWAPS[ds]||GYM[date.getDay()]||null}
 function sched(date){
   const dow=date.getDay(),ds=dk(date);
   const g=gym(date),isLeg=g&&g.includes('Leg'),noRun=isLeg||dow===0;
-  const gt=dow===2?'15:30':'16:30';
-  const tu=TUTOR[dow],te=TUTOR_END[dow],isExam=EXAMS[ds],isLast=ds==='2026-06-19';
+  const tu=TUTOR[dow],te=TUTOR_END[dow];
+  const tuStart=tu?+tu.split(':')[0]*60+ +tu.split(':')[1]:9999;
+  const tuEnd=te?+te.split(':')[0]*60+ +te.split(':')[1]:9999;
+  const isExam=EXAMS[ds],isLast=ds==='2026-06-19';
   const items=[],add=(t,n,c,s,id)=>{const mins=t==='—'?9999:+t.split(':')[0]*60+ +t.split(':')[1];items.push({time:t,name:n,cat:c,sub:s||'',id:id||(t+n).replace(/\W/g,''),mins})};
-  add('07:30','Wake — cold shower immediately','skin','30–60 secs cold. Aligns cortisol with circadian rhythm.','wake');
-  add('07:40','Oil pulling','skin','5 mins coconut oil before eating or drinking anything','oil');
-  if(!noRun)add('07:50','Morning run','gym','20–25 mins fasted easy pace. Builds appetite.','run');
-  add('08:20','Hot shower + cold finish','skin','End with 30–60 secs cold. Reduces inflammation, tightens pores.','shower');
-  add('08:30','Breakfast','food','4–5 eggs · 3 wholegrain toast · almond butter · oat milk shake · banana','bfast');
-  add('08:45','Morning supplements','supp','D3+K2 · Omega-3 · Multi · Potassium · B6 · Zinc — with fatty food for max absorption','supp-am');
-  add('08:50','Antibiotic','supp','After breakfast — prescription. Not before food.','antibiotic');
-  add('09:00','Ice roller + facial massage','skin','2 mins circular motions before cleanser. Depuffs, tightens pores.','ice');
-  add('09:05','Morning skincare','skin','Cetaphil → Niacinamide (2 min wait) → CeraVe → SPF50+','skin-am');
-  add('09:15','Red light mask','skin','8 mins','rlm-am');
-  add('09:23','Eyebrow serum + brow massage','skin','Apply serum, then 30 sec circular massage to boost circulation','brow');
-  add('09:26','Morning journal','other','3 priorities for today. 3 minutes. Lowers cortisol.','journal');
-  if(isExam){add('—','Exam day','exam',isExam.join(' · '),'exam-day');add('09:30','Light revision — key facts only','rev','Max 2 hours. No new content. Calm review only.','rev-exam')}
-  else add('09:30','Revision block 1','rev','~3 hours — hardest subject first. 7-8 hours total today.','rev1');
-  add('11:00','Water check','other','Should be on glass 2 — 1000ml done','w1');
-  if(tu&&+tu.split(':')[0]<13)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
-  add('13:00','Lunch','food','Large carbs + protein. Eat until full. Rice or pasta + chicken or mince + olive oil.','lunch');
-  if(!isExam)add('13:30','Revision block 2','rev','~2.5 hours — practice questions and past papers','rev2');
-  add('15:00','Water check','other','Should be on glass 4 — 2000ml done','w2');
-  if(tu&&+tu.split(':')[0]>=11&&+tu.split(':')[0]<17)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
-  if(g){
-    const pt=dow===2?'15:15':'16:15';
-    add(pt,'Dead hangs + wrist mobility','gym','60 sec dead hang · 5 mins wrist circles','dehang');
-    add(gt,'Gym session','gym',g,'gym');
-    add('17:45','Post-workout stretch','gym','10 mins — mandatory for recovery + calisthenics progress','stretch');
+
+  // ── MORNING ──
+  add('07:30','Wake — cold shower immediately','skin','30–60 secs cold immediately on waking. Aligns cortisol.','wake');
+  add('07:40','Oil pulling','skin','5 mins coconut oil. Do NOT eat or drink anything before this.','oil');
+  if(!noRun)add('07:50','Morning run','gym','20–25 mins fasted easy pace.','run');
+  // Shower: after run on run days, at 08:00 on non-run days
+  const showerTime=noRun?'08:00':'08:20';
+  add(showerTime,'Shower + cold finish','skin','Hot shower, end 30–60 secs cold. Reduces inflammation.','shower');
+  // Breakfast timing depends on whether tutor is early
+  // If tutor at 09:00 (Sat), need to push breakfast earlier to fit skincare
+  const bfastTime=tuStart<=9*60?'08:05':'08:30';
+  const suppTime=tuStart<=9*60?'08:20':'08:45';
+  const antibioticTime=tuStart<=9*60?'08:25':'08:50';
+  add(bfastTime,'Breakfast','food','4–5 eggs · 3 wholegrain toast · almond butter · oat milk shake · banana','bfast');
+  add(suppTime,'Morning supplements','supp','D3+K2 · Omega-3 · Multi · Potassium · B6 · Zinc — with food','supp-am');
+  add(antibioticTime,'Antibiotic','supp','After breakfast — prescription. Not before food.','antibiotic');
+
+  // Skincare: if tutor at 09:00, must finish by 09:00
+  // If tutor at 09:00: ice at 08:30, skincare 08:35, red light 08:45, brow+journal at 08:55
+  // If no early tutor: ice at 09:00, skincare 09:05, red light 09:15, brow 09:23, journal 09:26
+  const skinStart=tuStart<=9*60?8*60+30:9*60;
+  const toT=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+  add(toT(skinStart),'Ice roller + facial massage','skin','2 mins circular motions before cleanser. Depuffs, tightens.','ice');
+  add(toT(skinStart+5),'Morning skincare','skin','Cetaphil → Niacinamide (2 min wait) → CeraVe → SPF50+','skin-am');
+  add(toT(skinStart+15),'Red light mask','skin','8 mins','rlm-am');
+  add(toT(skinStart+25),'Eyebrow serum + brow massage','skin','Apply serum, 30 sec circular massage','brow');
+  add(toT(skinStart+28),'Morning journal','other','3 priorities for today. 3 minutes.','journal');
+
+  // ── TUTOR (if morning) ──
+  if(tu&&tuStart<11*60)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
+
+  // ── REVISION ──
+  // Start revision after tutor ends (if morning tutor), otherwise at 09:30
+  const rev1Start=tuStart<12*60?Math.max(tuEnd,9*60+30):9*60+30;
+  if(isExam){
+    add('—','Exam day','exam',isExam.join(' · '),'exam-day');
+    add(toT(rev1Start),'Light revision — key facts only','rev','Max 2 hours. No new content today.','rev-exam');
+  } else {
+    add(toT(rev1Start),'Revision block 1','rev','~2.5 hours — hardest subject first','rev1');
   }
-  if(tu&&+tu.split(':')[0]>=17)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
-  add('18:00','Protein shake + creatine','supp','2 scoops dairy-free in oat milk · 5g creatine post-workout for best absorption','shake');
-  add('18:30','Dinner','food','Protein heavy · double carbs · eat big. Biggest meal of the day.','dinner');
-  if(!isExam)add('19:30','Revision block 3','rev','~1.5 to 2 hours — consolidation. Total: 7-8 hours.','rev3');
-  add('21:00','Water check','other','Finish remaining — 3.5–4L total for the day','w3');
-  add('21:30','Dandelion tea','supp','Wind down begins. Digestive support.','dantea');
-  add('21:45','Red light mask — evening','skin','8 mins — second session','rlm-pm');
-  add('22:00','Evening skincare','skin','Cetaphil → completely dry → Differin thin layer → 20 min wait → CeraVe → castor oil brows','skin-pm');
-  add('22:10','Lip balm','skin','CeraVe or Vaseline. Differin dries lips.','lip');
-  add('22:15','Evening supplements','supp','Ashwagandha · Magnesium Glycinate · Collagen Peptides — sleep stack','supp-pm');
-  add('22:30','No phone — wind down','other','30 mins screen-free. Blue light counteracts ashwagandha.','nophone');
-  if(ds>='2026-06-01'&&ds<='2026-06-19')add('22:40','Teeth whitening strips','skin','HiSmile PAP+ sensitive · 30 mins. Start 1 June.','teeth');
-  if(isLast)add('—','Glow up complete — haircut day','other','35 days of the plan done. Book haircut.','final');
-  add('23:00','Sleep','other','8+ hours. Skin repairs, muscle grows, HGH released during deep sleep.','sleep');
+  add('10:45','Water check','other','Should be on glass 2 — 1000ml done','w1');
+
+  // Lunch at 13:00 always
+  add('13:00','Lunch','food','Large carbs + protein. Rice or pasta + chicken or mince + olive oil.','lunch');
+
+  // ── TUTOR (if midday) ──
+  if(tu&&tuStart>=11*60&&tuStart<14*60)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
+
+  // Rev block 2 starts after lunch + digest (13:30) or after midday tutor
+  const rev2Start=tuStart>=11*60&&tuStart<14*60?Math.max(tuEnd,13*60+30):13*60+30;
+  if(!isExam)add(toT(rev2Start),'Revision block 2','rev','~2 hours — practice questions + past papers','rev2');
+
+  add('15:00','Water check','other','Should be on glass 4 — 2000ml done','w2');
+
+  // ── TUTOR (if afternoon 11-17) ──
+  if(tu&&tuStart>=14*60&&tuStart<17*60)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
+
+  // ── GYM ──
+  if(g){
+    // Tuesday gym at 15:30 (before 17:00 tutor), otherwise 16:30
+    const gymTime=dow===2?'15:30':'16:30';
+    const dehangTime=dow===2?'15:15':'16:15';
+    add(dehangTime,'Dead hangs + wrist mobility','gym','60 sec dead hang · 5 mins wrist circles','dehang');
+    add(gymTime,'Gym session','gym',g,'gym');
+    // Stretch: after gym (1h 15min session = ends ~17:45 for 16:30, or 16:45 for 15:30)
+    const gymEndMins=(dow===2?15*60+30:16*60+30)+75;
+    // But if tutor at 17:00, stretch is BEFORE tutor (15:30 gym ends 16:45, stretch 16:45)
+    // If tutor at 17:00 on Tue: gym 15:30, ends ~16:45, stretch 16:45, then tutor 17:00
+    const stretchTime=toT(gymEndMins);
+    // Don't schedule stretch if it overlaps tutor
+    if(tuStart===9999||gymEndMins<tuStart){
+      add(stretchTime,'Post-workout stretch','gym','10 mins mandatory','stretch');
+    }
+  }
+
+  // ── TUTOR (if evening) ──
+  if(tu&&tuStart>=17*60)add(tu,'Tutor session — Zoom','rev',`Until ${te}`,'tutor');
+
+  // Protein shake after gym (or after tutor if gym + tutor combo)
+  const shakeTime=dow===2?'18:00':'18:00';
+  if(g)add(shakeTime,'Protein shake + creatine','supp','2 scoops dairy-free in oat milk · 5g creatine','shake');
+
+  add('18:30','Dinner','food','Protein heavy · double carbs · eat big.','dinner');
+
+  // Rev block 3 on non-exam days
+  if(!isExam){
+    const rev3Start=tu&&tuEnd>=19*60?Math.max(tuEnd,19*60+30):19*60+30;
+    add(toT(rev3Start),'Revision block 3','rev','~1.5 hours — consolidation + flashcards','rev3');
+  }
+
+  // ── EVENING ──
+  add('21:00','Water check','other','Finish remaining — 3.5–4L total','w3');
+  add('21:30','Dandelion tea','supp','Wind down begins.','dantea');
+  add('21:45','Red light mask — evening','skin','8 mins second session','rlm-pm');
+  // Evening skincare — Differin routine takes 36-40 mins total
+  // 21:55 Cetaphil, 22:00 wait dry, 22:03 Differin, 22:23 CeraVe, 22:25 castor oil
+  add('21:55','Evening skincare','skin','Cetaphil → wait completely dry (5 min) → Differin thin layer → wait 20 min → CeraVe → castor oil brows','skin-pm');
+  add('22:25','Lip balm','skin','After Differin wait — CeraVe or Vaseline.','lip');
+  add('22:30','Evening supplements','supp','Ashwagandha · Magnesium Glycinate · Collagen Peptides','supp-pm');
+  add('22:45','No phone — wind down','other','30 mins screen-free before sleep.','nophone');
+  if(ds>='2026-06-01'&&ds<='2026-06-19')add('22:35','Teeth whitening strips','skin','HiSmile PAP+ · 30 mins','teeth');
+  if(isLast)add('—','Glow up complete — haircut day','other','35 days done. Book haircut.','final');
+  add('23:15','Sleep','other','8 hours minimum.','sleep');
   items.sort((a,b)=>a.mins-b.mins);
   return items;
 }
@@ -1662,46 +1736,68 @@ function TH(){const h=document.documentElement,d=h.getAttribute('data-theme')===
 
 // ══ NOTIFICATION SCHEDULE ══
 const NOTIF_SCHEDULE=[
-  {time:'07:30',title:'Wake up',body:'Cold shower immediately — 30-60 secs',tag:'wake',days:[0,1,2,3,4,5,6]},
-  {time:'07:40',title:'Oil pulling',body:'5 mins coconut oil before eating',tag:'oil',days:[0,1,2,3,4,5,6]},
+  // ── WAKE ──
+  {time:'07:30',title:'Wake up',body:'Cold shower immediately — 30-60 secs cold',tag:'wake',days:[0,1,2,3,4,5,6]},
+  {time:'07:40',title:'Oil pulling',body:'5 mins coconut oil before eating anything',tag:'oil',days:[0,1,2,3,4,5,6]},
+  // ── RUN (Mon/Tue/Thu/Fri only — not leg days Wed/Sat, not Sun) ──
   {time:'07:50',title:'Morning run',body:'20-25 mins fasted easy pace',tag:'run',days:[1,2,4,5]},
-  {time:'08:20',title:'Shower',body:'Hot shower — cold finish 30-60 secs',tag:'shower',days:[0,1,2,3,4,5,6]},
-  {time:'08:30',title:'Breakfast',body:'Eggs · toast · almond butter · shake · banana',tag:'bfast',days:[0,1,2,3,4,5,6]},
-  {time:'08:45',title:'Morning supplements',body:'D3+K2 · Omega-3 · Multi · Potassium · B6 · Zinc',tag:'supp-am',days:[0,1,2,3,4,5,6]},
-  {time:'08:50',title:'Antibiotic',body:'After breakfast — prescription',tag:'antibiotic',days:[0,1,2,3,4,5,6]},
-  {time:'09:00',title:'Ice roller + massage',body:'2 mins before cleanser',tag:'ice',days:[0,1,2,3,4,5,6]},
-  {time:'09:05',title:'Morning skincare',body:'Cetaphil → Niacinamide → CeraVe → SPF50+',tag:'skin-am',days:[0,1,2,3,4,5,6]},
-  {time:'09:15',title:'Red light mask',body:'8 mins',tag:'rlm-am',days:[0,1,2,3,4,5,6]},
-  {time:'09:23',title:'Eyebrow serum + massage',body:'30 sec circular massage after serum',tag:'brow',days:[0,1,2,3,4,5,6]},
-  {time:'09:26',title:'Morning journal',body:'Write 3 priorities for today',tag:'journal',days:[0,1,2,3,4,5,6]},
-  {time:'11:00',title:'Water check',body:'Should be on glass 2 — 1000ml done',tag:'w1',days:[0,1,2,3,4,5,6]},
-  {time:'13:00',title:'Lunch time',body:'Large carbs + protein — eat until full',tag:'lunch',days:[0,1,2,3,4,5,6]},
-  {time:'15:00',title:'Water check',body:'Should be on glass 4 — 2000ml done',tag:'w2',days:[0,1,2,3,4,5,6]},
+  // ── SHOWER — 08:00 on no-run days (Sun/Wed/Sat), 08:20 on run days ──
+  {time:'08:00',title:'Shower',body:'Hot shower — cold finish 30-60 secs',tag:'shower',days:[0,3,6]},
+  {time:'08:20',title:'Shower',body:'Hot shower — cold finish 30-60 secs',tag:'shower',days:[1,2,4,5]},
+  // ── SATURDAY — shifted early due to 09:00 tutor ──
+  {time:'08:05',title:'Breakfast',body:'Eggs · toast · almond butter · shake · banana',tag:'bfast',days:[6]},
+  {time:'08:20',title:'Morning supplements',body:'D3+K2 · Omega-3 · Multi · Potassium · B6 · Zinc',tag:'supp-am',days:[6]},
+  {time:'08:25',title:'Antibiotic',body:'After breakfast — prescription',tag:'antibiotic',days:[6]},
+  {time:'08:30',title:'Ice roller + massage',body:'2 mins before cleanser',tag:'ice',days:[6]},
+  {time:'08:35',title:'Morning skincare',body:'Cetaphil → Niacinamide → CeraVe → SPF50+',tag:'skin-am',days:[6]},
+  {time:'08:45',title:'Red light mask',body:'8 mins',tag:'rlm-am',days:[6]},
+  {time:'08:55',title:'Eyebrow serum + massage',body:'30 sec circular massage after serum',tag:'brow',days:[6]},
+  {time:'08:58',title:'Morning journal',body:'Write 3 priorities for today',tag:'journal',days:[6]},
+  // ── NORMAL DAYS (Sun/Mon/Tue/Wed/Thu/Fri) — skincare at 09:00 ──
+  {time:'08:30',title:'Breakfast',body:'Eggs · toast · almond butter · shake · banana',tag:'bfast',days:[0,1,2,3,4,5]},
+  {time:'08:45',title:'Morning supplements',body:'D3+K2 · Omega-3 · Multi · Potassium · B6 · Zinc',tag:'supp-am',days:[0,1,2,3,4,5]},
+  {time:'08:50',title:'Antibiotic',body:'After breakfast — prescription',tag:'antibiotic',days:[0,1,2,3,4,5]},
+  {time:'09:00',title:'Ice roller + massage',body:'2 mins before cleanser',tag:'ice',days:[0,1,2,3,4,5]},
+  {time:'09:05',title:'Morning skincare',body:'Cetaphil → Niacinamide → CeraVe → SPF50+',tag:'skin-am',days:[0,1,2,3,4,5]},
+  {time:'09:15',title:'Red light mask',body:'8 mins',tag:'rlm-am',days:[0,1,2,3,4,5]},
+  {time:'09:25',title:'Eyebrow serum + massage',body:'30 sec circular massage after serum',tag:'brow',days:[0,1,2,3,4,5]},
+  {time:'09:28',title:'Morning journal',body:'Write 3 priorities for today',tag:'journal',days:[0,1,2,3,4,5]},
+  // ── TUTORS ──
   {time:'09:00',title:'Tutor — Zoom',body:'Until 10:30',tag:'tutor-sat',days:[6]},
   {time:'10:00',title:'Tutor — Zoom',body:'Until 11:00',tag:'tutor-sun',days:[0]},
   {time:'10:00',title:'Tutor — Zoom',body:'Until 11:00',tag:'tutor-wed',days:[3]},
   {time:'10:00',title:'Tutor — Zoom',body:'Until 11:00',tag:'tutor-thu',days:[4]},
   {time:'11:00',title:'Tutor — Zoom',body:'Until 12:00',tag:'tutor-fri',days:[5]},
   {time:'17:00',title:'Tutor — Zoom',body:'Until 18:00',tag:'tutor-tue',days:[2]},
+  // ── MIDDAY ──
+  {time:'10:45',title:'Water check',body:'Should be on glass 2 — 1000ml done',tag:'w1',days:[0,1,2,3,4,5,6]},
+  {time:'13:00',title:'Lunch time',body:'Large carbs + protein — eat until full',tag:'lunch',days:[0,1,2,3,4,5,6]},
+  {time:'15:00',title:'Water check',body:'Should be on glass 4 — 2000ml done',tag:'w2',days:[0,1,2,3,4,5,6]},
+  // ── GYM ──
   {time:'15:15',title:'Dead hangs + wrist mobility',body:'5 mins before gym',tag:'dehang-tue',days:[2]},
-  {time:'15:30',title:'Gym — Pull day',body:'Back · Biceps — before tutor at 5pm',tag:'gym-tue',days:[2]},
+  {time:'15:30',title:'Gym — Pull day',body:'Back · Biceps — finish by 16:45 before tutor at 17:00',tag:'gym-tue',days:[2]},
   {time:'16:15',title:'Dead hangs + wrist mobility',body:'5 mins before gym',tag:'dehang',days:[1,3,4,5,6]},
   {time:'16:30',title:'Gym time',body:'Check your split for today',tag:'gym',days:[1,3,4,5,6]},
+  // ── EVENING ──
   {time:'18:00',title:'Protein shake + creatine',body:'2 scoops oat milk · 5g creatine post-workout',tag:'shake',days:[0,1,2,3,4,5,6]},
   {time:'18:30',title:'Dinner time',body:'Protein heavy · double carbs · eat big',tag:'dinner',days:[0,1,2,3,4,5,6]},
   {time:'21:00',title:'Water check',body:'Finish remaining — 3.5-4L total',tag:'w3',days:[0,1,2,3,4,5,6]},
   {time:'21:30',title:'Dandelion tea',body:'Wind down begins',tag:'dantea',days:[0,1,2,3,4,5,6]},
   {time:'21:45',title:'Red light mask — evening',body:'8 mins second session',tag:'rlm-pm',days:[0,1,2,3,4,5,6]},
-  {time:'22:00',title:'Evening skincare',body:'Cetaphil → Differin → CeraVe → castor oil brows',tag:'skin-pm',days:[0,1,2,3,4,5,6]},
-  {time:'22:10',title:'Lip balm',body:'Differin dries lips — every night',tag:'lip',days:[0,1,2,3,4,5,6]},
-  {time:'22:15',title:'Evening supplements',body:'Ashwagandha · Magnesium · Collagen',tag:'supp-pm',days:[0,1,2,3,4,5,6]},
-  {time:'22:30',title:'No phone — wind down',body:'30 mins screen-free',tag:'nophone',days:[0,1,2,3,4,5,6]},
-  {time:'22:40',title:'Teeth whitening strips',body:'HiSmile PAP+ — 30 mins',tag:'teeth',days:[0,1,2,3,4,5,6],from:'2026-06-01',until:'2026-06-15'},
-  {time:'23:00',title:'Sleep',body:'8+ hours — skin repairs, muscle grows',tag:'sleep',days:[0,1,2,3,4,5,6]}
+  // ── EVENING SKINCARE (Differin routine = 36-40 mins) ──
+  {time:'21:55',title:'Evening skincare',body:'Cetaphil → dry → Differin → 20 min wait → CeraVe → castor oil brows',tag:'skin-pm',days:[0,1,2,3,4,5,6]},
+  {time:'22:25',title:'Lip balm',body:'20 min Differin wait done — apply CeraVe or Vaseline now',tag:'lip',days:[0,1,2,3,4,5,6]},
+  {time:'22:30',title:'Evening supplements',body:'Ashwagandha · Magnesium · Collagen',tag:'supp-pm',days:[0,1,2,3,4,5,6]},
+  {time:'22:45',title:'No phone — wind down',body:'30 mins screen-free before sleep',tag:'nophone',days:[0,1,2,3,4,5,6]},
+  // ── TEETH (1-15 June only) ──
+  {time:'22:35',title:'Teeth whitening strips',body:'HiSmile PAP+ — 30 mins',tag:'teeth',days:[0,1,2,3,4,5,6],from:'2026-06-01',until:'2026-06-15'},
+  // ── SLEEP ──
+  {time:'23:15',title:'Sleep',body:'8 hours — skin repairs, muscle grows',tag:'sleep',days:[0,1,2,3,4,5,6]}
 ];
 
 async function initPWA(){
   if(!('serviceWorker' in navigator))return;
+  if(location.hostname!=='bunblooket.github.io'){console.log('SW skipped on non-GitHub host');return;}
   try{
     const reg=await navigator.serviceWorker.register('./sw.js', {scope: '/glowup/'});
     await navigator.serviceWorker.ready;
@@ -1729,7 +1825,7 @@ async function enableNotifications(){
   }
 }
 
-function showNotifBanner(){
+function showNotifBanner(){if(location.hostname!=='bunblooket.github.io')return;
   if(!('Notification' in window))return;
   if(Notification.permission==='granted')return;
   const el=document.createElement('div');
